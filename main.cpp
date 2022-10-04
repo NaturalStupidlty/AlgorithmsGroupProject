@@ -2,6 +2,8 @@
 #include "ComplexMatrix.h"
 
 using std::vector;
+using std::cout;
+using std::endl;
 
 int main()
 {
@@ -13,14 +15,13 @@ int main()
                              { 4, 3, 8 },
                              { 7, 5, 6 } };
 */
-    ComplexMatrix<float> matrix = getIdentity<float>(order);
-
+    ComplexMatrix<float> identity = ComplexMatrix<float>::getIdentity(order);
     cout << "~~~ Matrix ~~~\n";
-    matrix.print();
-
-    matrix = matrix.getInverse();
+    identity.print();
+    identity = identity.getInverseGaussJordan();
 
     cout << "\n~~~ Inverse Matrix ~~~\n";
-    matrix.print();
+    identity.print();
+
     return 0;
 }
