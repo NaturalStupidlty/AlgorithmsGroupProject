@@ -21,125 +21,69 @@ public:
 
     Complex<T> operator + (const Complex<T>& C1)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real + C1.real;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary + C1.imaginary;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real + C1.real, this->imaginary + C1.imaginary);
     }
 
     Complex<T> operator + (T number)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real + number;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real + number, this->imaginary);
     }
 
-    void operator += (const Complex<T>& C1)
+    Complex<T>& operator += (const Complex<T>& C1)
     {
         // adding real part of complex numbers
         this->real = this->real + C1.real;
 
         // adding imaginary part of complex numbers
         this->imaginary = this->imaginary + C1.imaginary;
+        return *this;
     }
 
     Complex<T> operator - (const Complex<T>& C1)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real - C1.real;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary - C1.imaginary;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real - C1.real, this->imaginary - C1.imaginary);
     }
 
     Complex<T> operator - (T number)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real - number;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real - number, this->imaginary);
     }
 
-    void operator -= (const Complex<T>& C1)
+    Complex<T>& operator -= (const Complex<T>& C1)
     {
         // adding real part of complex numbers
         this->real = this->real - C1.real;
 
         // adding imaginary part of complex numbers
         this->imaginary = this->imaginary - C1.imaginary;
+        return *this;
     }
 
     Complex<T> operator * (const Complex<T>& C1)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // multiplying real part of complex numbers
-        temp.real = ((this->real) * (C1.real)) - ((this->imaginary) * (C1.imaginary));
-
-        // multiplying imaginary part of complex numbers
-        temp.imaginary = ((this->real) * (C1.imaginary)) + ((C1.real) * (this->imaginary));
-
-        // returning the result
-        return temp;
+        return Complex<T>(((this->real) * (C1.real)) - ((this->imaginary) * (C1.imaginary)),
+                          ((this->real) * (C1.imaginary)) + ((C1.real) * (this->imaginary)));
     }
 
     Complex<T> operator * (T number)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real * number;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary * number;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real * number, this->imaginary * number);
     }
 
-    void operator *= (const Complex<T>& C1)
+    Complex<T>& operator *= (const Complex<T>& C1)
     {
         // multiplying real part of complex numbers
         this->real = ((this->real) * (C1.real)) - ((this->imaginary) * (C1.imaginary));
 
         // multiplying imaginary part of complex numbers
         this->imaginary = ((this->real) * (C1.imaginary)) + ((C1.real) * (this->imaginary));
+        return *this;
     }
 
     Complex<T> operator / (const Complex<T>& C1)
     {
         // creating temporary variable
-        Complex temp;
+        Complex<T> temp;
 
         // dividing real part of complex numbers
         temp.real = ( (this->real * C1.real) + (this->imaginary * C1.imaginary) )
@@ -155,20 +99,10 @@ public:
 
     Complex<T> operator / (T number)
     {
-        // creating temporary variable
-        Complex temp;
-
-        // adding real part of complex numbers
-        temp.real = this->real / number;
-
-        // adding imaginary part of complex numbers
-        temp.imaginary = this->imaginary / number;
-
-        // returning the result
-        return temp;
+        return Complex<T>(this->real / number, this->imaginary / number);
     }
 
-    void operator /= (const Complex<T>& C1)
+    Complex<T>& operator /= (const Complex<T>& C1)
     {
         // dividing real part of complex numbers
         this->real = ( (this->real * C1.real) + (this->imaginary * C1.imaginary) )
@@ -177,6 +111,7 @@ public:
         // dividing imaginary part of complex numbers
         this->imaginary = ( (this->imaginary + C1.real) - (this->real + C1.imaginary) )
                          / ( (C1.real * C1.real) + (C1.imaginary * C1.imaginary) );
+        return *this;
     }
 
     bool operator < (const Complex<T>& C1)
