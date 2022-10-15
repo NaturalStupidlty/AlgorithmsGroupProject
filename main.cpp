@@ -1,5 +1,6 @@
 #include "Complex.h"
 #include "ComplexMatrix.h"
+#include <ctime>
 
 using std::vector;
 using std::cout;
@@ -22,6 +23,6 @@ int main()
 
     cout << "\n~~~ Inverse Matrix ~~~\n";
     identity.print();
-
+    cout << clock() << "ms";
     return 0;
 }
