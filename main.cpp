@@ -1,5 +1,6 @@
 #include "Complex.h"
 #include "ComplexMatrix.h"
+#include "LU.h"
 #include <ctime>
 
 using std::vector;
@@ -16,7 +17,7 @@ int main()
                              { 4, 3, 8 },
                              { 7, 5, 6 } };
 */
-    ComplexMatrix<float> identity = ComplexMatrix<float>::getIdentity(order);
+    /*ComplexMatrix<float> identity = ComplexMatrix<float>::getIdentity(order);
     cout << "~~~ Matrix ~~~\n";
     identity.print();
     identity = identity.getInverseGaussJordan();
@@ -24,5 +25,16 @@ int main()
     cout << "\n~~~ Inverse Matrix ~~~\n";
     identity.print();
     cout << clock() << "ms";
+    return 0;
+     */
+
+    int N = 3;
+
+    ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
+    matrix = matrix.fill();
+
+    LU lu(matrix, inverse, lower, upper, z, i, N);
+    lu.run();
+
     return 0;
 }

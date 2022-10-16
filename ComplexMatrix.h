@@ -25,10 +25,10 @@ public:
     explicit ComplexMatrix(int N)
     {
         this->order = N;
-        for (int i = 0; i < N; ++i)
+        for (int i = 0; i < order; ++i)
         {
             vector<Complex<T>> line;
-            for (int j = 0; j < N; ++j)
+            for (int j = 0; j < order; ++j)
             {
                 Complex<T> number;
                 line.push_back(number);
@@ -47,6 +47,16 @@ public:
         return identity;
     }
 
+    ComplexMatrix<T> fill()
+    {
+        ComplexMatrix<T> F(3);
+        for (int i = 0; i < order; ++i) {
+            for (int j = 0; j < order; ++j) {
+                F[i][j] = Complex<float>(rand(), rand());
+            }
+        }
+        return F;
+    }
 
     // Function to perform the inverse operation on the matrix
     ComplexMatrix<T> getInverseGaussJordan()
@@ -102,6 +112,7 @@ public:
     // Function to print out the matrix
     void print()
     {
+        cout << endl;
         for (int i = 0; i < order; ++i)
         {
             for (int j = 0; j < order; ++j)
@@ -109,7 +120,13 @@ public:
                 this->matrix[i][j].print();
             }
             cout << endl;
+            cout << endl;
         }
+        cout << endl;
+    }
+
+    ComplexMatrix() {
+
     }
 };
 

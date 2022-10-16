@@ -10,6 +10,7 @@ using std::endl;
 template <typename T> class Complex
 {
 public:
+
     T real;
     T imaginary;
 
@@ -106,11 +107,11 @@ public:
     {
         // dividing real part of complex numbers
         this->real = ( (this->real * C1.real) + (this->imaginary * C1.imaginary) )
-                    / ( (C1.real * C1.real) + (C1.imaginary * C1.imaginary) );
+                     / ( (C1.real * C1.real) + (C1.imaginary * C1.imaginary) );
 
         // dividing imaginary part of complex numbers
         this->imaginary = ( (this->imaginary + C1.real) - (this->real + C1.imaginary) )
-                         / ( (C1.real * C1.real) + (C1.imaginary * C1.imaginary) );
+                          / ( (C1.real * C1.real) + (C1.imaginary * C1.imaginary) );
         return *this;
     }
 
@@ -154,11 +155,7 @@ public:
 
     void print()
     {
-        if (this->imaginary > 0)
-        {
-            cout << this->real << " + " << this->imaginary << "i ";
-        }
-        cout << this->real << " - " << this->imaginary << "i ";
+        cout << this->real << " + " << this->imaginary << "i " << "  ";
     }
 };
 
