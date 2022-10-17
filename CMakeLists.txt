@@ -9,4 +9,4 @@ add_executable(AlgorithmsGroupProjectLU
         Complex.h
         ComplexMatrix.h
         main.cpp
-        LU.h)
+        )

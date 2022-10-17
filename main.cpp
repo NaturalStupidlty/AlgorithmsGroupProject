@@ -1,6 +1,5 @@
 #include "Complex.h"
 #include "ComplexMatrix.h"
-#include "LU.h"
 // Пізніше може знадобитися для бенчмаркінгу
 //#include <ctime>
 
@@ -11,7 +10,7 @@ using std::endl;
 int main() {
     int N = 3;
 
-    ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
+    ComplexMatrix<float>matrix (3);
     matrix = ComplexMatrix<float>::createRandom(N);
 
     ComplexMatrix<float> m = ComplexMatrix<float>::getIdentity(N);
@@ -26,10 +25,7 @@ int main() {
     m[2][2] = Complex<float>(9, 0);
 
     m.getInverseGaussJordan().print();
-
-
-    LU lu(m, inverse, lower, upper, z, i, N);
-    lu.run();
+    matrix.getInverseLU().print();
 
     return 0;
 }
