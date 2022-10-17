@@ -1,39 +1,34 @@
 #include "Complex.h"
 #include "ComplexMatrix.h"
 #include "LU.h"
-#include <ctime>
+// Пізніше може знадобитися для бенчмаркінгу
+//#include <ctime>
 
 using std::vector;
 using std::cout;
 using std::endl;
 
-int main()
-{
-    // Order of the matrix.
-    int order = 3;
-    // The matrix must be a square a matrix.
-    /*
-    float matrix[20][20] = { { 5, 7, 9 },
-                             { 4, 3, 8 },
-                             { 7, 5, 6 } };
-*/
-    /*ComplexMatrix<float> identity = ComplexMatrix<float>::getIdentity(order);
-    cout << "~~~ Matrix ~~~\n";
-    identity.print();
-    identity = identity.getInverseGaussJordan();
-
-    cout << "\n~~~ Inverse Matrix ~~~\n";
-    identity.print();
-    cout << clock() << "ms";
-    return 0;
-     */
-
+int main() {
     int N = 3;
 
     ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
-    matrix = matrix.fill();
+    matrix = ComplexMatrix<float>::createRandom(N);
 
-    LU lu(matrix, inverse, lower, upper, z, i, N);
+    ComplexMatrix<float> m = ComplexMatrix<float>::getIdentity(N);
+
+    m[0][1] = Complex<float>(2, 0);
+    m[0][2] = Complex<float>(3, 0);
+    m[1][0] = Complex<float>(4, 0);
+    m[1][1] = Complex<float>(5, 0);
+    m[1][2] = Complex<float>(6, 0);
+    m[2][0] = Complex<float>(-7, 0);
+    m[2][1] = Complex<float>(8, 0);
+    m[2][2] = Complex<float>(9, 0);
+
+    m.getInverseGaussJordan().print();
+
+
+    LU lu(m, inverse, lower, upper, z, i, N);
     lu.run();
 
     return 0;

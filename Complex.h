@@ -9,16 +9,14 @@ using std::endl;
 
 template <typename T> class Complex
 {
-public:
-
     T real;
     T imaginary;
+public:
+    Complex(T real, T imaginary) : real(real), imaginary(imaginary) {}
 
-    explicit Complex(T tempReal = 0, T tempImaginary = 0)
-    {
-        real = tempReal;
-        imaginary = tempImaginary;
-    }
+    explicit Complex(T number) : real(number), imaginary(number) {}
+
+    Complex() : real(0), imaginary(0) {}
 
     Complex<T> operator + (const Complex<T>& C1)
     {
@@ -81,6 +79,8 @@ public:
         return *this;
     }
 
+    // !!!!bugs ACHTUNG
+
     Complex<T> operator / (const Complex<T>& C1)
     {
         // creating temporary variable
@@ -103,6 +103,7 @@ public:
         return Complex<T>(this->real / number, this->imaginary / number);
     }
 
+    // !!!!bugs ACHTUNG
     Complex<T>& operator /= (const Complex<T>& C1)
     {
         // dividing real part of complex numbers
@@ -151,6 +152,33 @@ public:
             return true;
         }
         return false;
+    }
+
+    Complex<T>& operator = (const Complex &value)
+    {
+        this->real = value.real;
+        this->imaginary = value.imaginary;
+        return *this;
+    }
+
+    T getReal()
+    {
+        return this->real;
+    }
+
+    T getImaginary()
+    {
+        return this->imaginary;
+    }
+
+    void setReal(T realPart)
+    {
+        this->real = realPart;
+    }
+
+    void setImaginary(T imaginaryPart)
+    {
+        this->imaginary = imaginaryPart;
     }
 
     void print()
