@@ -92,6 +92,14 @@ private:
 
         return inverse;
     }
+
+    void swapRows(int firRow, int secRow) {
+        for (int i = 0; i < this->order; i++) {
+            Complex<T> t = this->matrix[firRow][i];
+            this->matrix[firRow][i] = this->matrix[secRow][i];
+            this->matrix[secRow][i] = t;
+        }
+    }
 public:
     // Дефолтний конструктор
     ComplexMatrix() = default;
@@ -142,47 +150,50 @@ public:
 
     // Функція для пошуку оберненої матриці методом Жордана Гауса
     ComplexMatrix<T> getInverseGaussJordan() {
-        // Одинична матриця
-        /* 1 0 0
-           0 1 0
-           0 0 1 */
         ComplexMatrix<T> identity = ComplexMatrix<T>::getIdentity(this->order);
         // Копія, щоб не змінювати реальну
         ComplexMatrix<T> matrixCopy = ComplexMatrix(*this);
-
+        
         for (int i = 0; i < this->order; i++) {
-            // Діагоналі елементи перетворюємо в 1
-            /* (a+b*i) * ((a-b*i) / (a^2 + b^2)) = 1 */
-            Complex<T> mul = Complex<T>(matrixCopy[i][i].getReal(), - matrixCopy[i][i].getImaginary())
-                    / ((matrixCopy[i][i].getReal() * matrixCopy[i][i].getReal())
-                    + (matrixCopy[i][i].getImaginary() * matrixCopy[i][i].getImaginary()));
+            // Якщо 0 то шукаємо перший ненульовий і свапаємо
+            if (matrixCopy[i][i].getReal() == 0 && matrixCopy[i][i].getImaginary() == 0) {
+                int t = i + 1;
+
+                while (matrixCopy[t][i].getReal() == 0 && matrixCopy[t][i].getImaginary() == 0) {
+                    t++;
+                }
+
+                matrixCopy.swapRows(i, t);
+                identity.swapRows(i, t);
+            }
+
+            // Ділимо на a+bi
+            Complex<T> divider = matrixCopy[i][i];
 
             for (int j = 0; j < this->order; j++) {
-                identity[i][j] *= mul;
+                identity[i][j] /= divider;
             }
             for (int j = i; j < this->order; j++) {
-                matrixCopy[i][j] *= mul;
+                matrixCopy[i][j] /= divider;
             }
 
             // Елементи під діагоналлю в 0
-            for (int k = i + 1 ; k < this->order; k++) {
-                T realPart = matrixCopy[k][i].getReal();
-                T imaginaryPart = matrixCopy[k][i].getImaginary();
-                for (int j = 0; j < this->order; j++) {
-                    matrixCopy[k][j] -= (matrixCopy[i][j] * Complex<T>(realPart, imaginaryPart));
+            for (int k = i + 1; k < this->order; k++) {
+                Complex<T> factor = matrixCopy[k][i];
 
-                    identity[k][j] -= (identity[i][j]  * Complex<T>(realPart, imaginaryPart));
-                }
+                for (int j = 0; j < this->order; j++) {
+                    if (j >= i) matrixCopy[k][j] -= (matrixCopy[i][j] * factor);
+                    identity[k][j] -= (identity[i][j] * factor);
+                }                
             }
 
             // елементи над діагоналлю в 0
-            for (int k = i - 1 ; k >= 0 ; k--) {
-                T realPart = matrixCopy[k][i].getReal();
-                T imaginaryPart = matrixCopy[k][i].getImaginary();
-                for (int j = 0; j < this->order; j++) {
-                    matrixCopy[k][j] -= (matrixCopy[i][j] * Complex<T>(realPart, imaginaryPart));
+            for (int k = i - 1; k >= 0; k--) {
+                Complex<T> factor = matrixCopy[k][i];
 
-                    identity[k][j] -= (identity[i][j] * Complex<T>(realPart, imaginaryPart));
+                for (int j = 0; j < this->order; j++) {
+                    if (j >= i) matrixCopy[k][j] -= (matrixCopy[i][j] * factor);
+                    identity[k][j] -= (identity[i][j] * factor);
                 }
             }
         }
