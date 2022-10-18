@@ -9,24 +9,21 @@ using std::endl;
 
 int main() {
     int N = 3;
-
+/*
+    ComplexMatrix<float> m = ComplexMatrix<float>(N);
+    m[0][0] = Complex<float>(1, 9);
+    m[0][1] = Complex<float>(2, 8);
+    m[0][2] = Complex<float>(3, -7);
+    m[1][0] = Complex<float>(4, 6);
+    m[1][1] = Complex<float>(5, 5);
+    m[1][2] = Complex<float>(6, 4);
+    m[2][0] = Complex<float>(-7, 3);
+    m[2][1] = Complex<float>(8, 2);
+    m[2][2] = Complex<float>(9, 1);
+*/
     ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
-    //matrix = ComplexMatrix<float>::createRandom(N);
-
-    ComplexMatrix<float> m = ComplexMatrix<float>::getIdentity(N);
-
-    m[0][1] = Complex<float>(2, 0);
-    m[0][2] = Complex<float>(3, 0);
-    m[1][0] = Complex<float>(4, 0);
-    m[1][1] = Complex<float>(5, 0);
-    m[1][2] = Complex<float>(6, 0);
-    m[2][0] = Complex<float>(-7, 0);
-    m[2][1] = Complex<float>(8, 0);
-    m[2][2] = Complex<float>(9, 0);
-
-    m.getInverseGaussJordan().print();
-
-    m.getInverseLU().print();
-
+    matrix = ComplexMatrix<float>::getRandom(N);
+    matrix.getInverseGaussJordan().print();
+    matrix.getInverseLU().print();
     return 0;
 }
