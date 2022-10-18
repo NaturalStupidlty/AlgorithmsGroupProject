@@ -10,8 +10,8 @@ using std::endl;
 int main() {
     int N = 3;
 
-    ComplexMatrix<float>matrix (3);
-    matrix = ComplexMatrix<float>::createRandom(N);
+    ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
+    //matrix = ComplexMatrix<float>::createRandom(N);
 
     ComplexMatrix<float> m = ComplexMatrix<float>::getIdentity(N);
 
@@ -25,7 +25,8 @@ int main() {
     m[2][2] = Complex<float>(9, 0);
 
     m.getInverseGaussJordan().print();
-    matrix.getInverseLU().print();
+
+    m.getInverseLU().print();
 
     return 0;
 }
