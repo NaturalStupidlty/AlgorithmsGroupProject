@@ -2,6 +2,9 @@
 #define ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
 
 #include "Complex.h"
+#include "Errors.h"
+#include <algorithm>
+#include <cmath>
 #include <vector>
 
 using std::cout;
@@ -93,11 +96,16 @@ private:
         return inverse;
     }
 
-    void swapRows(int firRow, int secRow) {
+    static int nextPowerOf2(int k)
+    {
+        return (int)pow(2, ceil(log2(k)));
+    }
+
+    void swapRows(const int& firstRow, const int& secondRow) {
         for (int i = 0; i < this->order; i++) {
-            Complex<T> t = this->matrix[firRow][i];
-            this->matrix[firRow][i] = this->matrix[secRow][i];
-            this->matrix[secRow][i] = t;
+            Complex<T> t = this->matrix[firstRow][i];
+            this->matrix[firstRow][i] = this->matrix[secondRow][i];
+            this->matrix[secondRow][i] = t;
         }
     }
 public:
@@ -105,13 +113,13 @@ public:
     ComplexMatrix() = default;
 
     // Конструктор копій
-    ComplexMatrix (const ComplexMatrix &value) {
+    ComplexMatrix (const ComplexMatrix& value) {
         this->order = value.order;
         this->matrix = value.matrix;
     }
 
     // Створити матрицю NxN з нулів
-    explicit ComplexMatrix(int N) {
+    explicit ComplexMatrix(const int& N) {
         this->order = N;
         for (int i = 0; i < this->order; ++i) {
             vector<Complex<T>> line;
@@ -128,52 +136,77 @@ public:
         return this->matrix[i];
     }
 
+    // Перевантаження +
+    ComplexMatrix<T> operator + (ComplexMatrix<T> complexMatrix) {
+        for (int i = 0; i < this->order; i++)
+        {
+            for (int j = 0; j < this->order; j++)
+            {
+                (*this)[i][j] = (*this)[i][j] + complexMatrix[i][j];
+            }
+        }
+        return *this;
+    }
+
+    // Перевантаження +
+    ComplexMatrix<T> operator - (ComplexMatrix<T> complexMatrix) {
+        for (int i = 0; i < this->order; i++)
+        {
+            for (int j = 0; j < this->order; j++)
+            {
+                (*this)[i][j] = (*this)[i][j] - complexMatrix[i][j];
+            }
+        }
+        return *this;
+    }
+
     // Створити одиничну матрицю
-    static ComplexMatrix<T> getIdentity(int N) {
+    static ComplexMatrix<T> getIdentity(const int& N) {
         ComplexMatrix<T> identity(N);
-        for (int i = 0; i < N; ++i) {
+        for (int i = 0; i < N; i++) {
             identity[i][i].setReal(1);
         }
         return identity;
     }
 
     // Створити матрицю з рандомними значеннями
-    static ComplexMatrix<T> getRandom(int order) {
+    static ComplexMatrix<T> getRandom(const int& order) {
         ComplexMatrix<T> F(order);
-        for (int i = 0; i < order; ++i) {
-            for (int j = 0; j < order; ++j) {
-                F[i][j] = Complex<T>(rand() % 10000, rand()% 10000);
+        for (int i = 0; i < order; i++) {
+            for (int j = 0; j < order; j++) {
+                F[i][j] = Complex<T>(rand() % 100000, rand()% 100000);
             }
         }
         return F;
     }
 
-    // Функція для пошуку оберненої матриці методом Жордана Гауса
+    // Функція для множення матриць методом Штрассена
+
+
+    // Функція для пошуку оберненої матриці методом Жордана Гауса О(n^3)
     ComplexMatrix<T> getInverseGaussJordan() {
         ComplexMatrix<T> identity = ComplexMatrix<T>::getIdentity(this->order);
         // Копія, щоб не змінювати реальну
         ComplexMatrix<T> matrixCopy = ComplexMatrix(*this);
         
         for (int i = 0; i < this->order; i++) {
-            // Якщо 0 то шукаємо перший ненульовий і свапаємо
-            if (matrixCopy[i][i].getReal() == 0 && matrixCopy[i][i].getImaginary() == 0) {
+            // Якщо 0, то шукаємо перший ненульовий і свапаємо
+            if (matrixCopy[i][i] == 0) {
                 int t = i + 1;
-
-                while (matrixCopy[t][i].getReal() == 0 && matrixCopy[t][i].getImaginary() == 0) {
+                while (matrixCopy[t][i] == 0) {
                     t++;
                 }
-
                 matrixCopy.swapRows(i, t);
                 identity.swapRows(i, t);
             }
 
-            // Ділимо на a+bi
+            // Ділимо на a + bi
             Complex<T> divider = matrixCopy[i][i];
 
             for (int j = 0; j < this->order; j++) {
                 identity[i][j] /= divider;
             }
-            for (int j = i; j < this->order; j++) {
+            for (int j = i + 1; j < this->order; j++) {
                 matrixCopy[i][j] /= divider;
             }
 
@@ -216,8 +249,8 @@ public:
     // Видрукувати матрицю
     void print() {
         cout << endl;
-        for (int i = 0; i < this->order; ++i) {
-            for (int j = 0; j < this->order; ++j) {
+        for (int i = 0; i < this->order; i++) {
+            for (int j = 0; j < this->order; j++) {
                 this->matrix[i][j].print();
             }
             cout << endl;

@@ -1,0 +1,30 @@
+#ifndef ALGORITHMSGROUPPROJECTLU_ERRORS_H
+#define ALGORITHMSGROUPPROJECTLU_ERRORS_H
+
+#include <map>
+#include <iostream>
+
+using std::cout;
+using std::endl;
+using std::map;
+
+const int CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE = 1;
+
+const int CANNOT_DIVIDE_BY_ZERO_ERROR_CODE = 2;
+
+const char* CANNOT_FIND_INVERSE_MATRIX_ERROR_TEXT = "MATRIX IS NOT INVERTIBLE: THE DETERMINANT IS ZERO";
+
+const char* CANNOT_DIVIDE_BY_ZERO_ERROR_TEXT = "CANNOT DIVIDE BY ZERO";
+
+map<int, const char*> ERRORS_MAP =
+{
+    {CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE, CANNOT_FIND_INVERSE_MATRIX_ERROR_TEXT},
+    {CANNOT_DIVIDE_BY_ZERO_ERROR_CODE, CANNOT_DIVIDE_BY_ZERO_ERROR_TEXT},
+};
+
+void printError(int error)
+{
+    cout << "ERROR " << error << ": " << ERRORS_MAP[error] << endl;
+}
+
+#endif //ALGORITHMSGROUPPROJECTLU_ERRORS_H

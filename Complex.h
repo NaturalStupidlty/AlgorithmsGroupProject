@@ -1,19 +1,23 @@
 #ifndef ALGORITHMSGROUPPROJECT_COMPLEX_H
 #define ALGORITHMSGROUPPROJECT_COMPLEX_H
 
+#include "Errors.h"
 #include <iostream>
 #include <vector>
 
 using std::cout;
 using std::endl;
+using std::ostream;
+using std::istream;
 
 template <typename T> class Complex {
+private:
     T real;
     T imaginary;
 public:
-    Complex(T real, T imaginary) : real(real), imaginary(imaginary) {}
+    Complex(const T& real, const T& imaginary) : real(real), imaginary(imaginary) {}
 
-    explicit Complex(T number) : real(number), imaginary(number) {}
+    explicit Complex(const T& number) : real(number), imaginary(number) {}
 
     Complex() : real(0), imaginary(0) {}
 
@@ -25,19 +29,24 @@ public:
         return this->imaginary;
     }
 
-    void setReal(T realPart) {
+    void setReal(const T& realPart) {
         this->real = realPart;
     }
 
-    void setImaginary(T imaginaryPart) {
+    void setImaginary(const T& imaginaryPart) {
         this->imaginary = imaginaryPart;
     }
 
     void print() {
-        cout << this->real << " + " << this->imaginary << "i " << "  ";
+        if (this->imaginary >= 0) {
+            cout << this->real << " + " << this->imaginary << " i " << "  ";
+        }
+        else {
+            cout << this->real << " - " << this->imaginary << " i " << "  ";
+        }
     }
 
-    Complex<T> operator + (T number) {
+    Complex<T> operator + (const T& number) {
         return Complex<T>(this->real + number, this->imaginary);
     }
 
@@ -52,7 +61,8 @@ public:
         return *this;
     }
 
-    Complex<T> operator - (T number) {
+
+    Complex<T> operator - (const T& number) {
         return Complex<T>(this->real - number, this->imaginary);
     }
 
@@ -67,7 +77,8 @@ public:
         return *this;
     }
 
-    Complex<T> operator * (T number) {
+
+    Complex<T> operator * (const T& number) {
         return Complex<T>(this->real * number, this->imaginary * number);
     }
 
@@ -85,8 +96,13 @@ public:
         return *this;
     }
 
-    Complex<T> operator / (T number) {
-        return Complex<T>(this->real / number, this->imaginary / number);
+
+    Complex<T> operator / (const T& number) {
+        if (number) {
+            return Complex<T>(this->real / number, this->imaginary / number);
+        }
+        printError(2);
+        return Complex<T>(0, 0);
     }
 
     Complex<T> operator / (const Complex<T>& C1) {
@@ -111,10 +127,25 @@ public:
         return *this;
     }
 
-    Complex<T>& operator = (const Complex &value) {
+
+    Complex<T>& operator = (const Complex& value) {
         this->real = value.real;
         this->imaginary = value.imaginary;
         return *this;
+    }
+
+    bool operator == (const Complex<T>& C1) {
+        if ((this->real == C1.real and this->imaginary == C1.imaginary)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool operator == (const T& number) {
+        if ((this->real == number and this->imaginary == number)) {
+            return true;
+        }
+        return false;
     }
 
     bool operator < (const Complex<T>& C1) {
@@ -145,6 +176,30 @@ public:
             return true;
         }
         return false;
+    }
+
+    friend ostream& operator << (ostream& out, Complex<T>& complex)
+    {
+        if (complex.real == 0) {
+            return out << "i";
+        }
+        if (complex.imaginary == 1) {
+            return out << complex.real <<" + i";
+        }
+        if (complex.imaginary == -1) {
+            return out << complex.real << " - i";
+        }
+        out << complex.real << " + " << complex.imaginary << "i";
+        return out;
+    }
+
+    friend istream& operator >> (istream& in, Complex<T>& complex)
+    {
+        cout << "Real:";
+        in >> complex.real;
+        cout << "Imagine:";
+        in >> complex.imaginary;
+        return in;
     }
 };
 
