@@ -135,44 +135,44 @@ public:
     }
 
     bool operator == (const Complex<T>& C1) {
-        if ((this->real == C1.real and this->imaginary == C1.imaginary)) {
+        if ((this->real == C1.real && this->imaginary == C1.imaginary)) {
             return true;
         }
         return false;
     }
 
     bool operator == (const T& number) {
-        if ((this->real == number and this->imaginary == number)) {
+        if ((this->real) == number && (this->imaginary == number)) {
             return true;
         }
         return false;
     }
 
     bool operator < (const Complex<T>& C1) {
-        if (this->real < C1.real or ((this->real = C1.real) and this->imaginary < C1.imaginary)) {
+        if (this->real < C1.real or ((this->real = C1.real) && this->imaginary < C1.imaginary)) {
             return true;
         }
         return false;
     }
 
     bool operator <= (const Complex<T>& C1) {
-        if ((this->real < C1.real or ((this->real = C1.real) and this->imaginary < C1.imaginary))
-            or ((this->real = C1.real) and (this->imaginary = C1.imaginary))) {
+        if ((this->real < C1.real or ((this->real = C1.real) && this->imaginary < C1.imaginary))
+            || ((this->real = C1.real) && (this->imaginary = C1.imaginary))) {
             return true;
         }
         return false;
     }
 
     bool operator > (const Complex<T>& C1) {
-        if (this->real > C1.real or ((this->real = C1.real) and this->imaginary > C1.imaginary)) {
+        if (this->real > C1.real || ((this->real = C1.real) && this->imaginary > C1.imaginary)) {
             return true;
         }
         return false;
     }
 
     bool operator >= (const Complex<T>& C1) {
-        if ((this->real > C1.real or ((this->real = C1.real) and this->imaginary > C1.imaginary))
-            or ((this->real = C1.real) and (this->imaginary = C1.imaginary))) {
+        if ((this->real > C1.real || ((this->real = C1.real) && this->imaginary > C1.imaginary))
+            || ((this->real = C1.real) && (this->imaginary = C1.imaginary))) {
             return true;
         }
         return false;

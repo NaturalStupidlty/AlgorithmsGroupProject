@@ -2,14 +2,15 @@
 #include "ComplexMatrix.h"
 // Пізніше може знадобитися для бенчмаркінгу
 //#include <ctime>
-
+#include <vector>
 using std::vector;
 using std::cout;
 using std::endl;
 
 int main() {
-    int N = 3;
-    ComplexMatrix<float> m = ComplexMatrix<float>(N);
+    int N = 3, M = 3;
+    ComplexMatrix<float> m = ComplexMatrix<float>(N, M);
+
     m[0][0] = Complex<float>(1, 9);
     m[0][1] = Complex<float>(2, 8);
     m[0][2] = Complex<float>(3, -7);
@@ -20,9 +21,9 @@ int main() {
     m[2][1] = Complex<float>(8, 2);
     m[2][2] = Complex<float>(9, 1);
 
-    ComplexMatrix<float> matrix(N), inverse(N), lower(N), upper(N), z(N), i(N);
-    matrix = ComplexMatrix<float>::getRandom(N);
-    m.getInverseGaussJordan().print();
-    matrix.getInverseLU().print();
+    (m * m).print();
+
+    //m.getInverseGaussJordan().print();
+    //m.getInverseLU2().print();
     return 0;
 }
