@@ -19,6 +19,7 @@ private:
     int m {};
     vector<vector<Complex<T>>> matrix;
 
+    // stackoverflow ?
     void STRASSEN_algorithmA(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& C)
     {
         // base case
@@ -97,36 +98,7 @@ private:
         }
     }
 
-    Complex<T> compute_z(int col, int row, ComplexMatrix<T> lower, ComplexMatrix<T> Z, ComplexMatrix<T> I) {
-        Complex<T> sum = Complex<T>(0);
-        for(int i = 0; i < this->n; i++) {
-            if(i != row) {
-                sum += lower[row][i] * Z[i][col];
-            }
-        }
-
-        Complex<T> result = I[row][col] - sum;
-        result = result / lower[row][row];
-
-        return result;
-    }
-
-    Complex<T> getInverseTriangle(int col, int row, ComplexMatrix<T> upper, ComplexMatrix<T> Z, ComplexMatrix<T> inverse) {
-        Complex<T> sum = Complex<T>(0);
-        for(int i = 0; i < this->n; i++) {
-            if(i != row) {
-                sum += upper[row][i] * inverse[i][col];
-            }
-        }
-
-        Complex<T> result = Z[row][col] - sum;
-        result = result / upper[row][row];
-
-
-        return result;
-    }
-
-    static int nextPowerOf2(int k)
+    inline static int nextPowerOf2(int k)
     {
         return (int)pow(2, ceil(log2(k)));
     }
@@ -143,14 +115,14 @@ public:
     ComplexMatrix() = default;
 
     // Конструктор копій
-    ComplexMatrix (const ComplexMatrix& value) {
-        this->n = value.n;
-        this->m = value.m;
-        this->matrix = value.matrix;
+    ComplexMatrix (const ComplexMatrix& complexMatrix) {
+        this->n = complexMatrix.n;
+        this->m = complexMatrix.m;
+        this->matrix = complexMatrix.matrix;
     }
 
     // Створити матрицю NxM з нулів
-    explicit ComplexMatrix(const int& N, const int& M) {
+    ComplexMatrix(const int& N, const int& M) {
         this->n = N;
         this->m = M;
         for (int i = 0; i < this->n; ++i) {
@@ -165,20 +137,11 @@ public:
 
     // Створити матрицю NxN з нулів
     explicit ComplexMatrix(const int& N) {
-        this->n = N;
-        this->m = N;
-        for (int i = 0; i < this->n; ++i) {
-            vector<Complex<T>> line;
-            for (int j = 0; j < this->n; ++j) {
-                Complex<T> number;
-                line.push_back(number);
-            }
-            matrix.push_back(line);
-        }
+        (*this) = ComplexMatrix<T>(N, N);
     }
 
     // Перевантаження []
-    vector<Complex<T>>& operator [] (const int& i) {
+    inline vector<Complex<T>>& operator [] (const int& i) {
         return this->matrix[i];
     }
 
@@ -338,14 +301,16 @@ public:
     }
 
     // Функція для пошуку оберненої матриці методом LU-розкладу
-    ComplexMatrix<T> getInverseLU2()
+    ComplexMatrix<T> getInverseLU()
     {
         if (this->m != this->n) {
             printError(4);
             return *this;
         }
         // Верхня трикутна матриця, нижня трикутна матриця
-        ComplexMatrix<T> Upper = ComplexMatrix(*this), Lower = ComplexMatrix::getIdentity(this->n);
+        // рахує правильно
+        ComplexMatrix<T> Upper = ComplexMatrix(*this),
+        Lower = ComplexMatrix::getIdentity(this->n);
         for (int i = 0; i < this->n; i++) {
             // Якщо 0, то шукаємо перший ненульовий і свапаємо
             if (Upper[i][i] == 0) {
@@ -356,28 +321,32 @@ public:
                 Upper.swapRows(i, t);
             }
 
-            // Елементи під діагоналлю в 0
             for (int k = i + 1; k < this->n; k++) {
                 Complex<T> factor = Upper[k][i];
+                Lower [k][i] = Upper[k][i] / Upper[i][i];
                 for (int j = 0; j < this->n; j++) {
                     Complex<T> divider = Upper[i][j] / Upper[i][i];
-                    Lower [k][j] = Upper[k][j] / Upper[i][i];
                     if (j >= i) Upper[k][j] -= (divider * factor);
                 }
             }
         }
-        ComplexMatrix<T> Inverse = ComplexMatrix::getIdentity(this->n),
-                B = ComplexMatrix::getIdentity(this->n), D(this->n, this->n);
-        for (int i = 0; i < this->n; i++) {
+        // можна знайти обернену матрицю для кожної з них і помножити їх
+        // нічого не працює :(
+        return (Lower.getInverseGaussJordan()) * (Upper.getInverseGaussJordan());
 
+        // спробував через заміни, чомусь не працює
+/*        ComplexMatrix<T> Inverse(this->n), D(this->n),
+        B = ComplexMatrix::getIdentity(this->n);
+        for (int i = 0; i < this->n; i++) {
+            // forward substitution
             for (int j = 0; j < this->n; j++) {
                 Complex<T> numerator = B[i][j];
-                for (int k = 1; k < this->n - 1; k++) {
+                for (int k = 1; k < this->n; k++) {
                     numerator -= Lower[j][k-1] * D[i][k-1];
                 }
                 D[i][j] = numerator / Lower[j][j];
             }
-
+            // backward substitution
             for (int j = this->n - 1; j >= 0; j--) {
                 Complex<T> numerator = D[i][j];
                 for (int k = this->n - 1; k >= 1; k--) {
@@ -385,71 +354,12 @@ public:
                 }
                 Inverse[i][j] = numerator;
             }
-
         }
-        return Inverse;
-    }
-    ComplexMatrix<T> getInverseLU() {
-        // Одинична матриця
-        ComplexMatrix<T> I = ComplexMatrix<T>::getIdentity(this->m);
-        // Копія, щоб не змінювати реальну
-        ComplexMatrix<T> mat = ComplexMatrix(*this);
-        // ???
-        ComplexMatrix<T> Z(this->m);
-        // ???
-        ComplexMatrix<T> inverse(this->m), lower(this->m), upper(this->m);
-
-        int i, j, k;
-        for (i = 0; i < this->m; i++) {
-            for (j = 0; j < this->m; j++) {
-                if (j < i) {
-                    lower[j][i] = Complex<T>(0);
-                }
-                else {
-                    lower[j][i] = mat[j][i];
-                    for (k = 0; k < i; k++) {
-                        lower[j][i] = lower[j][i] - lower[j][k] * upper[k][i];
-                    }
-                }
-            }
-            for (j = 0; j < this->m; j++) {
-                if (j < i) {
-                    upper[i][j] = Complex<T>(0);
-                }
-                else if (j == i) {
-                    upper[i][j] = Complex<T>(1);
-                }
-                else {
-                    upper[i][j] = mat[i][j] / lower[i][i];
-                    for (k = 0; k < i; k++) {
-                        upper[i][j] = upper[i][j] - ((lower[i][k] * upper[k][j]) / lower[i][i]);
-                    }
-                }
-            }
-        }
-
-        // compute z
-        for(int col = 0; col < this->m; col++) {
-            for(int row = 0; row < this->m; row++) {
-                Z[row][col] = compute_z(col, row, lower, Z, I);
-            }
-        }
-
-        // compute inverse
-        for(int col = 0; col < this->m; col++) {
-            for(int row = this->m - 1; row >= 0; row--) {
-                inverse[row][col] = getInverseTriangle(col, row, upper, Z, inverse);
-            }
-        }
-
-        upper.print();
-        lower.print();
-
-        return inverse;
+        return Inverse;*/
     }
 
     // Видрукувати матрицю
-    void print() {
+    inline void print() {
         cout << endl;
         for (int i = 0; i < this->n; i++) {
             for (int j = 0; j < this->m; j++) {

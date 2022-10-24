@@ -1,8 +1,10 @@
 #include "Complex.h"
 #include "ComplexMatrix.h"
-// Пізніше може знадобитися для бенчмаркінгу
-//#include <ctime>
+// Для бенчмаркінгу
+#include <chrono>
 #include <vector>
+
+using namespace std::chrono;
 using std::vector;
 using std::cout;
 using std::endl;
@@ -21,9 +23,26 @@ int main() {
     m[2][1] = Complex<float>(8, 2);
     m[2][2] = Complex<float>(9, 1);
 
-    (m * m).print();
+    ComplexMatrix<float> m2 = ComplexMatrix<float>(N, M);
+    m2[0][0] = Complex<float>(3, 0);
+    m2[0][1] = Complex<float>(-0.1, 0);
+    m2[0][2] = Complex<float>(-0.2, 0);
+    m2[1][0] = Complex<float>(0.1, 0);
+    m2[1][1] = Complex<float>(7, 0);
+    m2[1][2] = Complex<float>(-0.3, 0);
+    m2[2][0] = Complex<float>(0.3, 0);
+    m2[2][1] = Complex<float>(-0.2, 0);
+    m2[2][2] = Complex<float>(10, 0);
 
-    //m.getInverseGaussJordan().print();
-    //m.getInverseLU2().print();
+    m.getInverseGaussJordan().print();
+    m.getInverseLU().print();
+
+    // бенчмаркінг
+/*    auto start = high_resolution_clock::now();
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << duration.count() << endl;*/
+
     return 0;
 }

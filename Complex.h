@@ -21,23 +21,23 @@ public:
 
     Complex() : real(0), imaginary(0) {}
 
-    T getReal() {
+    inline T getReal() {
         return this->real;
     }
 
-    T getImaginary() {
+    inline T getImaginary() {
         return this->imaginary;
     }
 
-    void setReal(const T& realPart) {
+    inline void setReal(const T& realPart) {
         this->real = realPart;
     }
 
-    void setImaginary(const T& imaginaryPart) {
+    inline void setImaginary(const T& imaginaryPart) {
         this->imaginary = imaginaryPart;
     }
 
-    void print() {
+    inline void print() {
         if (this->imaginary >= 0) {
             cout << this->real << " + " << this->imaginary << " i " << "  ";
         }
@@ -46,15 +46,22 @@ public:
         }
     }
 
-    Complex<T> operator + (const T& number) {
+    inline Complex<T> operator + (const T& number) {
         return Complex<T>(this->real + number, this->imaginary);
     }
 
-    Complex<T> operator + (const Complex<T>& C1) {
+    inline Complex<T> operator + (const Complex<T>& C1) {
         return Complex<T>(this->real + C1.real, this->imaginary + C1.imaginary);
     }
 
-    Complex<T>& operator += (const Complex<T>& C1) {
+    inline Complex<T>& operator += (const T& number) {
+        this->real = this->real + number;
+
+        this->imaginary = this->imaginary + number;
+        return *this;
+    }
+
+    inline Complex<T>& operator += (const Complex<T>& C1) {
         this->real = this->real + C1.real;
 
         this->imaginary = this->imaginary + C1.imaginary;
@@ -62,15 +69,22 @@ public:
     }
 
 
-    Complex<T> operator - (const T& number) {
+    inline Complex<T> operator - (const T& number) {
         return Complex<T>(this->real - number, this->imaginary);
     }
 
-    Complex<T> operator - (const Complex<T>& C1) {
+    inline Complex<T> operator - (const Complex<T>& C1) {
         return Complex<T>(this->real - C1.real, this->imaginary - C1.imaginary);
     }
 
-    Complex<T>& operator -= (const Complex<T>& C1) {
+    inline Complex<T>& operator -= (const T& number) {
+        this->real = this->real - number;
+
+        this->imaginary = this->imaginary - number;
+        return *this;
+    }
+
+    inline Complex<T>& operator -= (const Complex<T>& C1) {
         this->real = this->real - C1.real;
 
         this->imaginary = this->imaginary - C1.imaginary;
@@ -78,17 +92,23 @@ public:
     }
 
 
-    Complex<T> operator * (const T& number) {
+    inline Complex<T> operator * (const T& number) {
         return Complex<T>(this->real * number, this->imaginary * number);
     }
 
-    Complex<T> operator * (const Complex<T>& C1) {
+    inline Complex<T> operator * (const Complex<T>& C1) {
         T a = this->real;
         T b = this->imaginary;
         return Complex<T>(a * C1.real - b * C1.imaginary, b * C1.real + a * C1.imaginary);
 }
 
-    Complex<T>& operator *= (const Complex<T>& C1) {
+    inline Complex<T>& operator *= (const T& number) {
+        this->real *= number;
+        this->imaginary *= number;
+        return *this;
+    }
+
+    inline Complex<T>& operator *= (const Complex<T>& C1) {
         T a = this->real;
         T b = this->imaginary;
         this->real = a * C1.real - b * C1.imaginary;
@@ -97,7 +117,7 @@ public:
     }
 
 
-    Complex<T> operator / (const T& number) {
+    inline Complex<T> operator / (const T& number) {
         if (number) {
             return Complex<T>(this->real / number, this->imaginary / number);
         }
@@ -105,7 +125,7 @@ public:
         return Complex<T>(0, 0);
     }
 
-    Complex<T> operator / (const Complex<T>& C1) {
+    inline Complex<T> operator / (const Complex<T>& C1) {
         T a = this->real;
         T b = this->imaginary;
         Complex<T> temp;
@@ -116,7 +136,13 @@ public:
         return temp;
     }
 
-    Complex<T>& operator /= (const Complex<T>& C1) {
+    inline Complex<T>& operator /= (const T& number) {
+        this->real /= number;
+        this->imaginary /= number;
+        return *this;
+    }
+
+    inline Complex<T>& operator /= (const Complex<T>& C1) {
         T a = this->real;
         T b = this->imaginary;
         this->real = (a * C1.real + b * C1.imaginary)
@@ -128,34 +154,40 @@ public:
     }
 
 
-    Complex<T>& operator = (const Complex& value) {
+    inline Complex<T>& operator = (const Complex& value) {
         this->real = value.real;
         this->imaginary = value.imaginary;
         return *this;
     }
 
-    bool operator == (const Complex<T>& C1) {
+    inline Complex<T>& operator = (const T& number) {
+        this->real = number;
+        this->imaginary = 0;
+        return *this;
+    }
+
+    inline bool operator == (const Complex<T>& C1) {
         if ((this->real == C1.real && this->imaginary == C1.imaginary)) {
             return true;
         }
         return false;
     }
 
-    bool operator == (const T& number) {
+    inline bool operator == (const T& number) {
         if ((this->real == number && this->imaginary == number)) {
             return true;
         }
         return false;
     }
 
-    bool operator < (const Complex<T>& C1) {
+    inline bool operator < (const Complex<T>& C1) {
         if (this->real < C1.real || ((this->real = C1.real) && this->imaginary < C1.imaginary)) {
             return true;
         }
         return false;
     }
 
-    bool operator <= (const Complex<T>& C1) {
+    inline bool operator <= (const Complex<T>& C1) {
         if ((this->real < C1.real || ((this->real = C1.real) && this->imaginary < C1.imaginary))
             || ((this->real = C1.real) && (this->imaginary = C1.imaginary))) {
             return true;
@@ -163,14 +195,14 @@ public:
         return false;
     }
 
-    bool operator > (const Complex<T>& C1) {
+    inline bool operator > (const Complex<T>& C1) {
         if (this->real > C1.real || ((this->real = C1.real) && this->imaginary > C1.imaginary)) {
             return true;
         }
         return false;
     }
 
-    bool operator >= (const Complex<T>& C1) {
+    inline bool operator >= (const Complex<T>& C1) {
         if ((this->real > C1.real || ((this->real = C1.real) && this->imaginary > C1.imaginary))
              ((this->real = C1.real) && (this->imaginary = C1.imaginary))) {
             return true;
@@ -178,7 +210,7 @@ public:
         return false;
     }
 
-    friend ostream& operator << (ostream& out, Complex<T>& complex)
+    inline friend ostream& operator << (ostream& out, Complex<T>& complex)
     {
         if (complex.real == 0) {
             return out << "i";
@@ -193,7 +225,7 @@ public:
         return out;
     }
 
-    friend istream& operator >> (istream& in, Complex<T>& complex)
+    inline friend istream& operator >> (istream& in, Complex<T>& complex)
     {
         cout << "Real:";
         in >> complex.real;
