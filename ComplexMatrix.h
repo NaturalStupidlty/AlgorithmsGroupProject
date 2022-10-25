@@ -15,8 +15,7 @@ using std::max;
 template <typename T> class ComplexMatrix
 {
 private:
-    int n {};
-    int m {};
+
     vector<vector<Complex<T>>> matrix;
 
     void STRASSEN_algorithmA(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& C)
@@ -139,6 +138,8 @@ private:
         }
     }
 public:
+    int n{};
+    int m{};
     // Дефолтний конструктор
     ComplexMatrix() = default;
 
@@ -459,6 +460,18 @@ public:
             cout << endl;
         }
         cout << endl;
+    }
+
+    ComplexMatrix<T> getTranspose() {
+        ComplexMatrix<T> Transpose(this->m, this->n);
+
+        for (int i = 0; i < this->n; i++) {
+            for (int j = 0; j < this->m; j++) {
+                Transpose[j][i] = (*this)[i][j];
+            }
+        }
+
+        return Transpose;
     }
 };
 #endif //ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
