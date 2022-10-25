@@ -11,8 +11,8 @@ using std::endl;
 
 int main() {
     int N = 3, M = 3;
-    ComplexMatrix<float> m = ComplexMatrix<float>(N, M);
 
+    ComplexMatrix<float> m = ComplexMatrix<float>(N, M);
     m[0][0] = Complex<float>(1, 9);
     m[0][1] = Complex<float>(2, 8);
     m[0][2] = Complex<float>(3, -7);
@@ -22,17 +22,6 @@ int main() {
     m[2][0] = Complex<float>(-7, 3);
     m[2][1] = Complex<float>(8, 2);
     m[2][2] = Complex<float>(9, 1);
-
-    ComplexMatrix<float> m2 = ComplexMatrix<float>(N, M);
-    m2[0][0] = Complex<float>(3, 0);
-    m2[0][1] = Complex<float>(-0.1, 0);
-    m2[0][2] = Complex<float>(-0.2, 0);
-    m2[1][0] = Complex<float>(0.1, 0);
-    m2[1][1] = Complex<float>(7, 0);
-    m2[1][2] = Complex<float>(-0.3, 0);
-    m2[2][0] = Complex<float>(0.3, 0);
-    m2[2][1] = Complex<float>(-0.2, 0);
-    m2[2][2] = Complex<float>(10, 0);
 
     m.getInverseGaussJordan().print();
     m.getInverseLU().print();
