@@ -331,31 +331,32 @@ public:
             }
         }
         // можна знайти обернену матрицю для кожної з них і помножити їх
-        // нічого не працює :(
-        return (Lower.getInverseGaussJordan()) * (Upper.getInverseGaussJordan());
+        // все працює :)
+        //return ((Upper.getInverseGaussJordan() * Lower.getInverseGaussJordan()));
 
-        // спробував через заміни, чомусь не працює
-/*        ComplexMatrix<T> Inverse(this->n), D(this->n),
-        B = ComplexMatrix::getIdentity(this->n);
-        for (int i = 0; i < this->n; i++) {
+        // спробував через заміни, чомусь працює        
+        ComplexMatrix<T> Inverse(this->n);
+        vector<Complex<T>> D(this->n);
+
+        for (int i = 0; i < this->n; i++) {            
             // forward substitution
             for (int j = 0; j < this->n; j++) {
-                Complex<T> numerator = B[i][j];
-                for (int k = 1; k < this->n; k++) {
-                    numerator -= Lower[j][k-1] * D[i][k-1];
+                Complex<T> numerator = i == j ? Complex<T>(1, 0) : Complex<T>(0, 0);
+                for (int k = 0; k < j; k++) {
+                    numerator -= Lower[j][k] * D[k];
                 }
-                D[i][j] = numerator / Lower[j][j];
+                D[j] = numerator;
             }
             // backward substitution
             for (int j = this->n - 1; j >= 0; j--) {
-                Complex<T> numerator = D[i][j];
-                for (int k = this->n - 1; k >= 1; k--) {
-                    numerator -= Upper[j][k] * Inverse[i][k];
+                Complex<T> numerator = D[j] ;
+                for (int k = j + 1; k < n; k++) {
+                    numerator -= Upper[j][k] * Inverse[k][i];
                 }
-                Inverse[i][j] = numerator;
-            }
+                Inverse[j][i] = numerator / Upper[j][j];
+            }            
         }
-        return Inverse;*/
+        return Inverse;
     }
 
     // Видрукувати матрицю
