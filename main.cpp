@@ -23,8 +23,23 @@ int main() {
     m[2][1] = Complex<float>(8, 2);
     m[2][2] = Complex<float>(9, 1);
 
-    m.getInverseGaussJordan().print();
-    m.getInverseLU().print();
+
+    ComplexMatrix<float> m4(3);
+    m4[0][0] = Complex<float>(0);
+    m4[0][1] = Complex<float>(0);
+    m4[0][2] = Complex<float>(0);
+
+    m4[1][0] = Complex<float>(2);
+    m4[1][1] = Complex<float>(88);
+    m4[1][2] = Complex<float>(42);
+
+    m4[2][0] = Complex<float>(1);
+    m4[2][1] = Complex<float>(6);
+    m4[2][2] = Complex<float>(1);
+
+
+    m4.getInverseGaussJordan().print();
+    m4.getInverseLU().print();
 
     // бенчмаркінг
 /*    auto start = high_resolution_clock::now();

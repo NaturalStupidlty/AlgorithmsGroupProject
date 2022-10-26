@@ -29,67 +29,45 @@ private:
         for (int i = 0; i < this->n; i++) {
             Complex<T> t = this->matrix[firstRow][i];
             this->matrix[firstRow][i] = this->matrix[secondRow][i];
-            this->matrix[secondRow][i] = t;
+            this->matrix[secondRow][i] = t;/**/
         }
     }
 
     // повертає true, якщо можна знайти розклад і false, якщо ні
-    bool getLUDecomposition(ComplexMatrix<T>& Lower, ComplexMatrix<T>& Upper, ComplexMatrix<T>& Permutation) {
+    bool getLUDecomposition(ComplexMatrix<T>& C, ComplexMatrix<T>& P) {
         // Верхня, нижня трикутні матриці та матриця перестановок
-        Upper = ComplexMatrix(*this),
-        Lower = ComplexMatrix::getIdentity(this->n),
-        Permutation = ComplexMatrix::getIdentity(this->n);
-        for (int i = 0; i < this->n; i++) {
-            // Якщо 0, то шукаємо перший ненульовий і свапаємо
-            if (Upper[i][i] == 0) {
-                // column для перевірки на нульовий стовпчик, а row на рядочок
-                int column, row;
-                column = row = i + 1;
-                while (column < this->n && Upper[column][i] == 0) {
-                    column++;
-                }
-                while (row < this->n && Upper[i][row] == 0) {
-                    row++;
-                }
-                if (column == this->n || row == this->n) {
-                    printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
-                    return false;
-                }
-                Upper.swapRows(i, column);
-                Permutation.swapRows(i, column);
+        if (this->m != this->n) {
+            printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
+            return false;
+        }
+        // Верхня трикутна матриця, нижня трикутні матриці
+        // зберігаються в С
+        C = ComplexMatrix(*this),
+        P = ComplexMatrix::getIdentity(this->n);
+
+        for (int i = 0; i < n; i++) {
+            // поиск опорного элемента
+            int t = i;
+            while (t < this->n && C[t][i] == 0) {
+                t++;
+            }
+            if (t == this->n) {
+                printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
+                return false;
             }
 
-            for (int k = i + 1; k < this->n; k++) {
-                Complex<T> factor = Upper[k][i];
-                Lower [k][i] = Upper[k][i] / Upper[i][i];
-                for (int j = 0; j < this->n; j++) {
-                    Complex<T> divider = Upper[i][j] / Upper[i][i];
-                    if (j >= i) Upper[k][j] -= (divider * factor);
-                }
+            //меняем местами i-ю строку и строку с опорным элементом
+            P.swapRows(t, i);
+            C.swapRows(t, i);
+            for (int j = i + 1; j < n; j++) {
+                C[j][i] /= C[i][i];
+                for (int k = i + 1; k < n; k++)
+                    C[j][k] -= C[j][i] * C[i][k];
             }
         }
         return true;
     }
 
-    // знайти визначник
-    // (використаний LU розклад)
-    Complex<T> getDeterminant() {
-        Complex<T> determinant(1);
-        ComplexMatrix<T> Lower, Upper, Permutation;
-        if (getLUDecomposition(Lower, Upper, Permutation) == false) {
-            return determinant;
-        }
-        for (int i = 0; i < this->n; i++) {
-            // враховуємо (не)парність перестановок
-            if (Permutation[i][i] == 0) {
-                determinant *= (-1);
-            }
-            determinant *= Lower[i][i] * Upper[i][i];
-        }
-        return determinant;
-    }
-
-    // stackoverflow ?
     void StrassenMultiplication(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& C) {
         // базовий випадок
         if (A.n == 1) {
@@ -294,11 +272,6 @@ public:
             printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
             return *this;
         }
-        if (this->getDeterminant() == 0)
-        {
-            printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
-            return *this;
-        }
 
         // Одинична матриця
         ComplexMatrix<T> identity = ComplexMatrix<T>::getIdentity(this->n);
@@ -309,8 +282,12 @@ public:
             // Якщо 0, то шукаємо перший ненульовий і свапаємо
             if (matrixCopy[i][i] == 0) {
                 int t = i + 1;
-                while (matrixCopy[t][i] == 0) {
+                while (t < this->n && matrixCopy[t][i] == 0) {
                     t++;
+                }
+                if (t == this->n) {
+                    printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+                    return *this;
                 }
                 matrixCopy.swapRows(i, t);
                 identity.swapRows(i, t);
@@ -355,8 +332,8 @@ public:
             printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
             return *this;
         }
-        ComplexMatrix<T> Lower, Upper, Permutation;
-        if (getLUDecomposition(Lower, Upper, Permutation) == false) {
+        ComplexMatrix<T> C, Permutation;
+        if (getLUDecomposition(C, Permutation) == false) {
             printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
             return *this;
         }
@@ -370,7 +347,7 @@ public:
             for (int j = 0; j < this->n; j++) {
                 Complex<T> numerator = i == j ? Complex<T>(1, 0) : Complex<T>(0, 0);
                 for (int k = 0; k < j; k++) {
-                    numerator -= Lower[j][k] * D[k];
+                    numerator -= C[j][k] * D[k];
                 }
                 D[j] = numerator;
             }
@@ -378,16 +355,12 @@ public:
             for (int j = this->n - 1; j >= 0; j--) {
                 Complex<T> numerator = D[j] ;
                 for (int k = j + 1; k < this->n; k++) {
-                    numerator -= Upper[j][k] * Inverse[k][i];
+                    numerator -= C[j][k] * Inverse[k][i];
                 }
-                Inverse[j][i] = numerator / Upper[j][j];
+                Inverse[j][i] = numerator / C[j][j];
             }            
         }
         return Inverse * Permutation;
-
-        // також можна було б знайти обернену матрицю для
-        // кожної з них окремо і потім помножити їх
-        // return ((Upper.getInverseGaussJordan() * Lower.getInverseGaussJordan()));
     }
 
     // Видрукувати матрицю
@@ -402,5 +375,18 @@ public:
         }
         cout << endl;
     }
+
+    ComplexMatrix<T> getTranspose() {
+        ComplexMatrix<T> Transpose(this->m, this->n);
+
+        for (int i = 0; i < this->n; i++) {
+            for (int j = 0; j < this->m; j++) {
+                Transpose[j][i] = (*this)[i][j];
+            }
+        }
+
+        return Transpose;
+    }
+
 };
 #endif //ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
