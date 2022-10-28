@@ -1,0 +1,422 @@
+#ifndef ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
+#define ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
+
+#include "Complex.h"
+#include <algorithm>
+#include <cmath>
+#include <random>
+#include <type_traits>
+#include <vector>
+
+using std::cout;
+using std::swap;
+using std::vector;
+using std::max;
+using std::mt19937;
+using std::random_device;
+using std::uniform_real_distribution;
+
+
+template <typename T> class ComplexMatrix
+{
+private:
+    uint rows {};
+    uint columns {};
+    vector<vector<Complex<T>>> matrix;
+
+    // Генерація випадкових чисел
+    T getRandomNumber(T rangeStart = -99999999999,
+               T rangeEnd = 99999999999)
+    {
+        random_device randomDevice;
+        mt19937 range(randomDevice());
+        uniform_real_distribution<T> distance(rangeStart, rangeEnd);
+        return distance(range);
+    }
+
+    // Наступний степінь числа 2
+    inline static int nextPowerOf2(int power) {
+        return (int)pow(2, ceil(log2(power)));
+    }
+
+    // Поміняти місцями 2 рядки
+    void swapRows(const int& firstRow, const int& secondRow) {
+        for (int i = 0; i < this->rows; i++) {
+            Complex<T> rowCopy = this->matrix[firstRow][i];
+            this->matrix[firstRow][i] = this->matrix[secondRow][i];
+            this->matrix[secondRow][i] = rowCopy;
+        }
+    }
+
+    // Повертає true, якщо можна знайти розклад і false, якщо ні
+    bool getLUDecomposition(ComplexMatrix<T>& Decomposition, ComplexMatrix<T>& Permutations) {
+        // Верхня, нижня трикутні матриці та матриця перестановок
+        if (this->columns != this->rows) {
+            printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
+            return false;
+        }
+        // Верхня трикутна матриця, нижня трикутні матриці
+        // зберігаються в Decomposition
+        // Decomposition = L + U - E
+        Decomposition = ComplexMatrix(*this),
+                Permutations = ComplexMatrix::getIdentity(this->rows);
+
+        for (int i = 0; i < rows; i++) {
+            // Пошук опорного елемента
+            int supportElement = i;
+            while (supportElement < this->rows && Decomposition[supportElement][i] == 0) {
+                supportElement++;
+            }
+            if (supportElement == this->rows) {
+                printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
+                return false;
+            }
+
+            // Міняємо місцями i-ту рядок і рядок з опорним елементом
+            Permutations.swapRows(supportElement, i);
+            Decomposition.swapRows(supportElement, i);
+            for (int j = i + 1; j < rows; j++) {
+                Decomposition[j][i] /= Decomposition[i][i];
+                for (int k = i + 1; k < rows; k++)
+                    Decomposition[j][k] -= Decomposition[j][i] * Decomposition[i][k];
+            }
+        }
+        return true;
+    }
+
+    // Множення матриць методом Штрассена
+    void StrassenMultiplication(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& Product) {
+        // База
+        if (A.rows == 1) {
+            Product[0][0] = A[0][0] * B[0][0];
+            return;
+        }
+        int newSize = A.rows / 2;
+        ComplexMatrix<T>
+                a11(newSize), a12(newSize), a21(newSize), a22(newSize),
+                b11(newSize), b12(newSize), b21(newSize), b22(newSize),
+                c11(newSize), c12(newSize), c21(newSize), c22(newSize),
+                p1(newSize), p2(newSize), p3(newSize), p4(newSize),
+                p5(newSize), p6(newSize), p7(newSize),
+                aResult(newSize), bResult(newSize);
+
+        // Ділимо матриці на підматриці
+        for (int i = 0; i < newSize; i++) {
+            for (int j = 0; j < newSize; j++) {
+                a11[i][j] = A[i][j];
+                a12[i][j] = A[i][j + newSize];
+                a21[i][j] = A[i + newSize][j];
+                a22[i][j] = A[i + newSize][j + newSize];
+
+                b11[i][j] = B[i][j];
+                b12[i][j] = B[i][j + newSize];
+                b21[i][j] = B[i + newSize][j];
+                b22[i][j] = B[i + newSize][j + newSize];
+            }
+        }
+
+        // p1 = (a11+a22) * (b11+b22)
+        StrassenMultiplication((a11 + a22), (b11 + b22), p1);
+
+        // p2 = (a21+a22) * (b11)
+        StrassenMultiplication(a21 + a22, b11, p2);
+
+        // p3 = (a11) * (b12 - b22)
+        StrassenMultiplication(a11, b12 - b22, p3);
+
+        // p4 = (a22) * (b21 - b11)
+        StrassenMultiplication(a22, b21 - b11, p4);
+
+        // p5 = (a11+a12) * (b22)
+        StrassenMultiplication(a11 + a12, b22, p5);
+
+        // p6 = (a21-a11) * (b11+b12)
+        StrassenMultiplication(a21 - a11, b11 + b12, p6);
+
+        // p7 = (a12-a22) * (b21+b22)
+        StrassenMultiplication(a12 - a22, b21 + b22, p7);
+
+        //  c21, c21, c11, c22:
+        c12 = p3 + p5;
+        c21 = p2 + p4;
+        c11 = ((p1 + p4) + p7) - p5;
+        c22 = ((p1 + p3) + p6) - p2;
+
+        // Складаємо результат у єдину матрицю:
+        for (int i = 0; i < newSize; i++) {
+            for (int j = 0; j < newSize; j++) {
+                Product[i][j] = c11[i][j];
+                Product[i][j + newSize] = c12[i][j];
+                Product[i + newSize][j] = c21[i][j];
+                Product[i + newSize][j + newSize] = c22[i][j];
+            }
+        }
+    }
+public:
+    // Дефолтний конструктор
+    ComplexMatrix() = default;
+
+    // Конструктор копій
+    ComplexMatrix (const ComplexMatrix& Matrix) {
+        this->rows = Matrix.rows;
+        this->columns = Matrix.columns;
+        this->matrix = Matrix.matrix;
+    }
+
+    // Створити матрицю NxM з нулів
+    ComplexMatrix(const int& N, const int& M) {
+        this->rows = N;
+        this->columns = M;
+        for (int i = 0; i < this->rows; ++i) {
+            vector<Complex<T>> line;
+            for (int j = 0; j < this->columns; ++j) {
+                Complex<T> number;
+                line.push_back(number);
+            }
+            matrix.push_back(line);
+        }
+    }
+
+    // Створити матрицю NxN з нулів
+    explicit ComplexMatrix(const int& N) {
+        (*this) = ComplexMatrix<T>(N, N);
+    }
+
+    // Гетери
+    uint getColumns() {
+        return this->columns;
+    }
+
+    uint getRows() {
+        return this->rows;
+    }
+
+    // Створити одиничну матрицю
+    static ComplexMatrix<T> getIdentity(const int& N) {
+        ComplexMatrix<T> Identity(N);
+        for (int i = 0; i < N; i++) {
+            Identity[i][i].setReal(1);
+        }
+        return Identity;
+    }
+
+    // Створити матрицю NxM з випадковими значеннями
+    static ComplexMatrix<T> getRandom(const int& N, const int& M) {
+        ComplexMatrix<T> Random(N, M);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                Random[i][j] = Complex<T>(Random.getRandomNumber(), Random.getRandomNumber());
+            }
+        }
+        return Random;
+    }
+
+    // Створити матрицю NxN з випадковими значеннями
+    static ComplexMatrix<T> getRandom(const int& N) {
+        return getRandom(N, N);
+    }
+
+    // Функція для пошуку оберненої матриці методом Жордана Гауса О(n^3)
+    ComplexMatrix<T> getInverseGaussJordan() {
+        // Якщо матриця не квадратна
+        if (this->columns != this->rows) {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return *this;
+        }
+
+        // Одинична матриця
+        ComplexMatrix<T> Identity = ComplexMatrix<T>::getIdentity(this->rows);
+        // Копія, щоб не змінювати реальну
+        ComplexMatrix<T> MatrixCopy = ComplexMatrix(*this);
+        
+        for (int i = 0; i < this->rows; i++) {
+            // Якщо 0, то шукаємо перший ненульовий і свапаємо
+            if (MatrixCopy[i][i] == 0) {
+                int supportElement = i + 1;
+                while (supportElement < this->rows && MatrixCopy[supportElement][i] == 0) {
+                    supportElement++;
+                }
+                if (supportElement == this->rows) {
+                    printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+                    return *this;
+                }
+                MatrixCopy.swapRows(i, supportElement);
+                Identity.swapRows(i, supportElement);
+            }
+
+            // Ділимо на a + bi
+            Complex<T> divider = MatrixCopy[i][i];
+
+            for (int j = 0; j < this->rows; j++) {
+                Identity[i][j] /= divider;
+            }
+            for (int j = i + 1; j < this->rows; j++) {
+                MatrixCopy[i][j] /= divider;
+            }
+
+            // Елементи під діагоналлю в 0
+            for (int k = i + 1; k < this->rows; k++) {
+                Complex<T> factor = MatrixCopy[k][i];
+
+                for (int j = 0; j < this->rows; j++) {
+                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
+                    Identity[k][j] -= (Identity[i][j] * factor);
+                }                
+            }
+
+            // Елементи над діагоналлю в 0
+            for (int k = i - 1; k >= 0; k--) {
+                Complex<T> factor = MatrixCopy[k][i];
+
+                for (int j = 0; j < this->rows; j++) {
+                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
+                    Identity[k][j] -= (Identity[i][j] * factor);
+                }
+            }
+        }
+        return Identity;
+    }
+
+    // Функція для пошуку оберненої матриці методом LU-розкладу
+    ComplexMatrix<T> getInverseLU() {
+        if (this->columns != this->rows) {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Decomposition, Permutation;
+        if (getLUDecomposition(Decomposition, Permutation) == false) {
+            printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+            return *this;
+        }
+
+        // Спробував через заміни, чомусь працює
+        ComplexMatrix<T> Inverse(this->rows);
+        vector<Complex<T>> D(this->rows);
+
+        for (int i = 0; i < this->rows; i++) {
+            // forward substitution
+            for (int j = 0; j < this->rows; j++) {
+                Complex<T> numerator = i == j ? Complex<T>(1, 0) : Complex<T>(0, 0);
+                for (int k = 0; k < j; k++) {
+                    numerator -= Decomposition[j][k] * D[k];
+                }
+                D[j] = numerator;
+            }
+            // backward substitution
+            for (int j = this->rows - 1; j >= 0; j--) {
+                Complex<T> numerator = D[j] ;
+                for (int k = j + 1; k < this->rows; k++) {
+                    numerator -= Decomposition[j][k] * Inverse[k][i];
+                }
+                Inverse[j][i] = numerator / Decomposition[j][j];
+            }            
+        }
+        return Inverse * Permutation;
+    }
+
+    // Транспонування матриці
+    ComplexMatrix<T> getTransposed() {
+        ComplexMatrix<T> Transposed(this->columns, this->rows);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                Transposed[j][i] = (*this)[i][j];
+            }
+        }
+        return Transposed;
+    }
+
+    // Перевантаження []
+    inline vector<Complex<T>>& operator [] (const int& i) {
+        return this->matrix[i];
+    }
+
+    // Перевантаження +
+    ComplexMatrix<T> operator + (ComplexMatrix<T> Matrix) {
+        if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
+            printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Result(this->rows, this->columns);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                Result[i][j] = (*this)[i][j] + Matrix[i][j];
+            }
+        }
+        return Result;
+    }
+
+    // Перевантаження -
+    ComplexMatrix<T> operator - (ComplexMatrix<T> Matrix) {
+        if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
+            printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Result(this->rows, this->columns);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                Result[i][j] = (*this)[i][j] - Matrix[i][j];
+            }
+        }
+        return Result;
+    }
+
+    // Перевантаження *
+    // Функція для множення матриць методом Штрассена
+    ComplexMatrix<T> operator * (ComplexMatrix<T> Matrix) {
+        if (this->columns != Matrix.rows) {
+            printError(CANNOT_MULTIPLY_ERROR_CODE);
+            return *this;
+        }
+        int size = nextPowerOf2(max({ this->rows, this->columns, Matrix.columns}));
+        ComplexMatrix<T> AResized(size), BResized(size), Product(size);
+
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                AResized[i][j] = (*this)[i][j];
+            }
+        }
+        for (int i = 0; i < Matrix.rows; i++) {
+            for (int j = 0; j < Matrix.columns; j++) {
+                BResized[i][j] = Matrix[i][j];
+            }
+        }
+
+        StrassenMultiplication(AResized, BResized, Product);
+
+        ComplexMatrix Result(this->rows, Matrix.columns);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < Matrix.columns; j++) {
+                Result[i][j] = Product[i][j];
+            }
+        }
+        return Result;
+    }
+
+    ComplexMatrix<T> multiply (ComplexMatrix<T> complexMatrix) {
+        ComplexMatrix<T> Product(this->rows, complexMatrix.columns);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < complexMatrix.columns; j++) {
+                for (int k = 0; k < complexMatrix.rows; k++) {
+                    Product[i][j] += (*this)[i][k] * complexMatrix[k][j];
+                }
+            }
+        }
+        return Product;
+    }
+
+    // Видрукувати матрицю
+    inline void print() {
+        cout << endl;
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                this->matrix[i][j].print();
+            }
+            cout << endl;
+            cout << endl;
+        }
+        cout << endl;
+    }
+
+};
+#endif //ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
+

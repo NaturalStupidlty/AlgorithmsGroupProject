@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(AlgorithmsGroupProjectLU
-        Complex.h
-        ComplexMatrix.h
+        Headers/Complex.h
+        Headers/ComplexMatrix.h
         main.cpp
-        Errors.h LinearRegression.h)
+        Headers/Errors.h
+        Headers/LinearRegression.h
+        Headers/doctest.h "Unit tests/Test getInverseGaussJordan.cpp")
