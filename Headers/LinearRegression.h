@@ -9,21 +9,21 @@ template <typename T> struct LinearRegression {
 };
 
 template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T> Y, ComplexMatrix<T> X) {
-    if (Y.getRows() != 1 || Y.getColumns() != X.getColumns()) {
+    if (Y.getColumns() != 1 || Y.getRows() != X.getRows() || X.getRows() <= X.getColumns()) {
         printError(CANNOT_BUILD_LINEAR_REGRESSION_ERROR_CODE);
         return {};
     }
 
-    ComplexMatrix<T> NewX(X.getColumns(), X.getRows() + 1);
+    ComplexMatrix<T> NewX(X.getRows(), X.getColumns() + 1);
     ComplexMatrix<T> CoefficientsMatrix;
     vector<Complex<T>> coefficientsVector;
     LinearRegression<T> linearRegression;
     Complex<T> mse(0, 0);
 
-    for (int i = 0; i < X.getColumns(); i++) {
+    for (int i = 0; i < X.getRows(); i++) {
         NewX[i][0] = Complex<T>(1, 0);
 
-        for (int j = 1; j <= X.getRows(); j++) {
+        for (int j = 1; j <= X.getColumns(); j++) {
             NewX[i][j] = X[i][j - 1];
         }
     }
@@ -31,21 +31,21 @@ template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T>
 
     CoefficientsMatrix = (NewX.getTransposed() * NewX).getInverseGaussJordan() * NewX.getTransposed() * Y;
 
-    for (int i = 0; i < CoefficientsMatrix.getColumns(); i++) {
+    for (int i = 0; i < CoefficientsMatrix.getRows(); i++) {
         coefficientsVector.push_back(CoefficientsMatrix[i][0]);
     }
 
-    for (int i = 0; i < Y.getColumns(); i++) {
+    for (int i = 0; i < Y.getRows(); i++) {
         Complex<T> yReg(0, 0);
 
-        for (int j = 0; j < NewX.getRows(); j++) {
+        for (int j = 0; j < NewX.getColumns(); j++) {
             yReg += NewX[i][j] * coefficientsVector[j];
         }
 
         mse += (Y[i][0] - yReg) * (Y[i][0] - yReg);
     }
 
-    mse /= Complex<T>(Y.getColumns(), 0);
+    mse /= Complex<T>(Y.getRows(), 0);
 
     linearRegression.coefficients = coefficientsVector;
     linearRegression.meanSquaredError = mse;

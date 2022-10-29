@@ -20,8 +20,8 @@ using std::uniform_real_distribution;
 template <typename T> class ComplexMatrix
 {
 private:
-    uint rows {};
-    uint columns {};
+    unsigned int rows {};
+    unsigned int columns {};
     vector<vector<Complex<T>>> matrix;
 
     // Генерація випадкових чисел
@@ -183,11 +183,11 @@ public:
     }
 
     // Гетери
-    uint getColumns() {
+    unsigned int getColumns() {
         return this->columns;
     }
 
-    uint getRows() {
+    unsigned int getRows() {
         return this->rows;
     }
 
