@@ -2,20 +2,11 @@
 #define ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
 
 #include "Complex.h"
-#include <algorithm>
-#include <cmath>
-#include <random>
-#include <type_traits>
 #include <vector>
 
 using std::cout;
-using std::swap;
 using std::vector;
 using std::max;
-using std::mt19937;
-using std::random_device;
-using std::uniform_real_distribution;
-
 
 template <typename T> class ComplexMatrix
 {
@@ -23,16 +14,6 @@ private:
     unsigned int rows {};
     unsigned int columns {};
     vector<vector<Complex<T>>> matrix;
-
-    // Генерація випадкових чисел
-    T getRandomNumber(T rangeStart = -99999999999,
-               T rangeEnd = 99999999999)
-    {
-        random_device randomDevice;
-        mt19937 range(randomDevice());
-        uniform_real_distribution<T> distance(rangeStart, rangeEnd);
-        return distance(range);
-    }
 
     // Наступний степінь числа 2
     inline static int nextPowerOf2(int power) {
@@ -57,7 +38,8 @@ private:
         }
         // Верхня трикутна матриця, нижня трикутні матриці
         // зберігаються в Decomposition
-        // Decomposition = L + U - E
+        // Decomposition = Lower + Upper - E
+        // E - одинична матриця
         Decomposition = ComplexMatrix(*this),
                 Permutations = ComplexMatrix::getIdentity(this->rows);
 
@@ -201,11 +183,11 @@ public:
     }
 
     // Створити матрицю NxM з випадковими значеннями
-    static ComplexMatrix<T> getRandom(const int& N, const int& M) {
+    static ComplexMatrix<T> getRandom(const int& N, const int& M, T range = INT_MAX) {
         ComplexMatrix<T> Random(N, M);
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                Random[i][j] = Complex<T>(Random.getRandomNumber(), Random.getRandomNumber());
+                Random[i][j] = Complex<T>::getRandomNumber(-range, range);
             }
         }
         return Random;
@@ -360,6 +342,21 @@ public:
         return Result;
     }
 
+    // Перевантаження ==
+    bool operator == (ComplexMatrix<T> Matrix) {
+        if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
+            return false;
+        }
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < this->columns; j++) {
+                if ((*this)[i][j] != Matrix[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // Перевантаження *
     // Функція для множення матриць методом Штрассена
     ComplexMatrix<T> operator * (ComplexMatrix<T> Matrix) {
@@ -392,12 +389,16 @@ public:
         return Result;
     }
 
-    ComplexMatrix<T> multiply (ComplexMatrix<T> complexMatrix) {
-        ComplexMatrix<T> Product(this->rows, complexMatrix.columns);
+    ComplexMatrix<T> multiply (ComplexMatrix<T> Matrix) {
+        if (this->columns != Matrix.rows) {
+            printError(CANNOT_MULTIPLY_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Product(this->rows, Matrix.columns);
         for (int i = 0; i < this->rows; i++) {
-            for (int j = 0; j < complexMatrix.columns; j++) {
-                for (int k = 0; k < complexMatrix.rows; k++) {
-                    Product[i][j] += (*this)[i][k] * complexMatrix[k][j];
+            for (int j = 0; j < Matrix.columns; j++) {
+                for (int k = 0; k < Matrix.rows; k++) {
+                    Product[i][j] += (*this)[i][k] * Matrix[k][j];
                 }
             }
         }
@@ -419,4 +420,3 @@ public:
 
 };
 #endif //ALGORITHMSGROUPPROJECT_COMPLEXMATRIX_H
-

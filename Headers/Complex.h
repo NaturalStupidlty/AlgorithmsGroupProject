@@ -3,6 +3,7 @@
 
 #include "Errors.h"
 #include <iostream>
+#include <random>
 #include <vector>
 
 using std::cout;
@@ -21,6 +22,20 @@ public:
     explicit Complex(const T& number) : real(number), imaginary(0) {}
 
     Complex() : real(0), imaginary(0) {}
+
+    // Генерація випадкових чисел
+    static Complex<T> getRandomNumber(T rangeStart, T rangeEnd)
+    {
+        std::random_device randomDevice;
+        std::mt19937 range(randomDevice());
+        std::uniform_real_distribution<T> distance(rangeStart, rangeEnd);
+        return Complex<T>(distance(range), distance(range));
+    }
+
+    // Модуль числа
+    T abs() {
+        return sqrt((this->real) * (this->real) + (this->imaginary) * (this->imaginary));
+    }
 
     // Гетери
     inline T getReal() {
