@@ -13,7 +13,6 @@ template <typename T> void testInverseErrorDifference(int order, T epsilon) {
         }
     }
 }
-/*
 
 TEST_CASE("Test getInverseLU Errors") {
     SUBCASE("Matrix is NOT square") {
@@ -76,4 +75,3 @@ TEST_CASE("Test getInverseLU Work") {
         }
     }
 }
-*/
