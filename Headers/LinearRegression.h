@@ -1,7 +1,7 @@
 #ifndef ALGORITHMSGROUPPROJECT_LINEARREGRESSION_H
 #define ALGORITHMSGROUPPROJECT_LINEARREGRESSION_H
 
-#include "Headers/ComplexMatrix.h"
+#include "ComplexMatrix.h"
 
 template <typename T> struct LinearRegression {
     vector<Complex<T>> coefficients;
@@ -15,6 +15,7 @@ template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T>
     }
 
     ComplexMatrix<T> NewX(X.getRows(), X.getColumns() + 1);
+    ComplexMatrix<T> NewXTransposed(X.getColumns() + 1, X.getRows());
     ComplexMatrix<T> CoefficientsMatrix;
     vector<Complex<T>> coefficientsVector;
     LinearRegression<T> linearRegression;
@@ -28,7 +29,9 @@ template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T>
         }
     }
 
-    CoefficientsMatrix = (NewX.getTransposed() * NewX).getInverseGaussJordan() * NewX.getTransposed() * Y;
+    NewXTransposed = NewX.getTransposed();
+
+    CoefficientsMatrix = (NewXTransposed * NewX).getInverseGaussJordan() * NewXTransposed * Y;
 
     for (int i = 0; i < CoefficientsMatrix.getRows(); i++) {
         coefficientsVector.push_back(CoefficientsMatrix[i][0]);
