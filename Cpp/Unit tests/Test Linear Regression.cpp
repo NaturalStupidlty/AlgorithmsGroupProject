@@ -8,19 +8,19 @@ Complex<double> testAndGetErrorDifference(int varsAmount, int dataAmount, Comple
     Complex<double> maxMSE(0);
 
     for (int i = 0; i <= varsAmount; i++) {
-        randCoefficients.emplace_back(Complex<double>::getRandomNumber(-500, 500).getReal());
+        randCoefficients.emplace_back(Complex<double>::getRandomNumber(-500, 500, true).getReal());
     }
 
     for (int i = 0; i < dataAmount; i++) {
         Complex<double> yReg = randCoefficients[0];
 
         for (int j = 0; j < varsAmount; j++) {
-            Complex<double> randX(Complex<double>::getRandomNumber(-500, 500));
+            Complex<double> randX(Complex<double>::getRandomNumber(-500, 500, true));
             X[i][j] = randX;
             yReg += randCoefficients[j + 1] * randX;
         }
 
-        Complex<double> deviation = Complex<double>(Complex<double>::getRandomNumber(-(double)INT_MAX, (double)INT_MAX)) * maxDeviation;
+        Complex<double> deviation = Complex<double>::getRandomNumber(-(double)INT_MAX, (double)INT_MAX, true) * maxDeviation;
         maxMSE += deviation * deviation;
         Y[i][0] = yReg + deviation;
     }

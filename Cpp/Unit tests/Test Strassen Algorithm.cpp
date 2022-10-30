@@ -19,6 +19,7 @@ template <typename T> void testMultiplicationErrorDifference(int order, T epsilo
     }
     CHECK(valid);
 }
+/*
 
 TEST_CASE("Test getInverseGaussJordan Errors") {
     ComplexMatrix<double> Matrix1(10,9);
@@ -45,3 +46,4 @@ TEST_CASE("Test StrassenAlgorithm Work") {
         }
     }
 }
+*/
