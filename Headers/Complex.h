@@ -64,7 +64,7 @@ public:
             cout << this->real << " + " << this->imaginary << " i " << "  ";
         }
         else {
-            cout << this->real << " - " << abs(this->imaginary) << " i " << "  ";
+            cout << this->real << " - " << -this->imaginary << " i " << "  ";
         }
     }
 

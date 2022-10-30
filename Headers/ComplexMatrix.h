@@ -22,10 +22,19 @@ private:
 
     // Поміняти місцями 2 рядки
     void swapRows(const int& firstRow, const int& secondRow) {
-        for (int i = 0; i < this->rows; i++) {
+        for (int i = 0; i < this->columns; i++) {
             Complex<T> rowCopy = this->matrix[firstRow][i];
             this->matrix[firstRow][i] = this->matrix[secondRow][i];
             this->matrix[secondRow][i] = rowCopy;
+        }
+    }
+
+    // Поміняти місцями 2 стовпчики
+    void swapColumns(const int& firstColumn, const int& secondColumn) {
+        for (int i = 0; i < this->rows; i++) {
+            Complex<T> columnCopy = this->matrix[i][firstColumn];
+            this->matrix[i][firstColumn] = this->matrix[i][secondColumn];
+            this->matrix[i][secondColumn] = columnCopy;
         }
     }
 
@@ -293,7 +302,21 @@ public:
                 Inverse[j][i] = numerator / Decomposition[j][j];
             }            
         }
-        return Inverse * Permutation;
+
+        for (int i = this->rows - 1; i >= 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (Permutation[i][j] != Complex<T>(1, 0)) {
+                    continue;
+                }
+                    
+                Permutation.swapRows(i, j);
+                Inverse.swapColumns(i, j);
+                i++;
+                break;
+            }
+        }
+
+        return Inverse;
     }
 
     // Транспонування матриці
