@@ -24,9 +24,8 @@ void testBuildingLinearRegression(ComplexMatrix<double> Y, ComplexMatrix<double>
     buildLinearRegression(Y, X);
 }
 
-void timeTestInverseGaussJordan(int order = 10)
+void timeTestInverseGaussJordan(int order = 10, int accuracy = 100)
 {
-    int accuracy = 100;
     cout << endl;
     auto start = high_resolution_clock::now();
     for (int i = 0; i < accuracy; ++i) {
@@ -43,9 +42,8 @@ void timeTestInverseGaussJordan(int order = 10)
     cout << endl;
 }
 
-void timeTestInverseLU(int order = 10)
+void timeTestInverseLU(int order = 10, int accuracy = 100)
 {
-    int accuracy = 100;
     cout << endl;
     auto start = high_resolution_clock::now();
     for (int i = 0; i < accuracy; ++i) {
@@ -62,9 +60,8 @@ void timeTestInverseLU(int order = 10)
     cout << endl;
 }
 
-void timeTestStrassenAlgorithm(int rows = 10, int columns = 10)
+void timeTestStrassenAlgorithm(int rows = 10, int columns = 10, int accuracy = 100)
 {
-    int accuracy = 100;
     cout << endl;
     auto start = high_resolution_clock::now();
     for (int i = 0; i < accuracy; ++i) {
@@ -81,8 +78,7 @@ void timeTestStrassenAlgorithm(int rows = 10, int columns = 10)
     cout << endl;
 }
 
-void timeLinearRegression(int varsAmount = 5, int dataAmount = 10) {
-    int accuracy = 100;
+void timeLinearRegression(int varsAmount = 5, int dataAmount = 10, int accuracy = 100) {
     cout << endl;
     auto start = high_resolution_clock::now();
     for (int i = 0; i < accuracy; ++i) {

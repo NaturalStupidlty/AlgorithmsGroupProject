@@ -8,6 +8,7 @@ using std::endl;
 
 int main(int argc, char** argv) {
     system("chcp 65001");
+
     // Для проходження unit tests
     doctest::Context context;
     context.applyCommandLine(argc, argv);
