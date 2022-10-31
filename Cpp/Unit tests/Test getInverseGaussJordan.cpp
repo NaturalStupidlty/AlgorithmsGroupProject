@@ -71,7 +71,7 @@ TEST_CASE("Test getInverseGaussJordan Work") {
             testInverseErrorDifference(10, (double)1e-13);
         }
         SUBCASE("100x100 test") {
-            testInverseErrorDifference(100, (double)1e-12);
+            testInverseErrorDifference(100, (double)1e-11);
         }
     }
 }

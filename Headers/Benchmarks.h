@@ -1,6 +1,7 @@
 #ifndef ALGORITHMSGROUPPROJECTLU_BENCHMARKS_H
 #define ALGORITHMSGROUPPROJECTLU_BENCHMARKS_H
 
+#include "Headers/ComplexMatrix.h"
 #include "LinearRegression.h"
 #include <chrono>
 
@@ -17,10 +18,14 @@ void testInverseLU(ComplexMatrix<double> Matrix) {
 }
 
 void testStrassenAlgorithm(ComplexMatrix<double> Matrix) {
+    Matrix.StrassenMultiply(Matrix);
+}
+
+void testRegularMultiplication(ComplexMatrix<double> Matrix) {
     Matrix * Matrix;
 }
 
-void testBuildingLinearRegression(ComplexMatrix<double> Y, ComplexMatrix<double> X) {
+void testBuildingLinearRegression(const ComplexMatrix<double>& Y, const ComplexMatrix<double>& X) {
     buildLinearRegression(Y, X);
 }
 
@@ -34,7 +39,7 @@ void timeTestInverseGaussJordan(int order = 10, int accuracy = 100)
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    int res = duration.count()/accuracy;
+    long long int res = duration.count() / accuracy;
     cout << "Середній час виконання алгоритму інверсії методом Жордана-Гауса: ";
     cout << res / 1000000 << " секунд, "
          << res % 1000000 / 1000 << " мілісекунд i "
@@ -52,7 +57,7 @@ void timeTestInverseLU(int order = 10, int accuracy = 100)
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    int res = duration.count()/accuracy;
+    long long int res = duration.count()/accuracy;
     cout << "Середній час виконання алгоритму інверсії LU розкладанням: ";
     cout << res / 1000000 << " секунд, "
          << res % 1000000 / 1000 << " мілісекунд i "
@@ -70,8 +75,26 @@ void timeTestStrassenAlgorithm(int rows = 10, int columns = 10, int accuracy = 1
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    int res = duration.count()/accuracy;
+    long long int res = duration.count()/accuracy;
     cout << "Середній час виконання алгоритму Штрассена: ";
+    cout << res / 1000000 << " секунд, "
+         << res % 1000000 / 1000 << " мілісекунд i "
+         << res % 1000 << " мікросекунд" << endl;
+    cout << endl;
+}
+
+void timeTestRegularMultiplication(int rows = 10, int columns = 10, int accuracy = 100)
+{
+    cout << endl;
+    auto start = high_resolution_clock::now();
+    for (int i = 0; i < accuracy; ++i) {
+        ComplexMatrix<double> Test = ComplexMatrix<double>::getRandom(rows, columns);
+        testRegularMultiplication(Test);
+    }
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    long long int res = duration.count()/accuracy;
+    cout << "Середній час виконання алгоритму звичайного множення: ";
     cout << res / 1000000 << " секунд, "
          << res % 1000000 / 1000 << " мілісекунд i "
          << res % 1000 << " мікросекунд" << endl;
@@ -88,7 +111,7 @@ void timeLinearRegression(int varsAmount = 5, int dataAmount = 10, int accuracy 
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    int res = duration.count()/accuracy;
+    long long int res = duration.count()/accuracy;
     cout << "Середній час виконання алгоритму побудови лінійної регресії: ";
     cout << res / 1000000 << " секунд, "
          << res % 1000000 / 1000 << " мілісекунд i "

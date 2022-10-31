@@ -60,22 +60,22 @@ TEST_CASE("Test Linear Regression Work") {
     }
 
     SUBCASE("Medium amount of data and small deviation") {
-        CHECK((testAndGetErrorDifference(5, 10, Complex<double>(0.5, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(0.5, 0)) <= 0));
     }
     SUBCASE("Medium amount of data and medium deviation") {
-        CHECK((testAndGetErrorDifference(5, 10, Complex<double>(10, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(10, 0)) <= 0));
     }
     SUBCASE("Medium amount of data and big deviation") {
-        CHECK((testAndGetErrorDifference(5, 10, Complex<double>(100, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(100, 0)) <= 0));
     }
 
     SUBCASE("Big amount of data and small deviation") {
-        CHECK((testAndGetErrorDifference(10, 20, Complex<double>(0.5, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(0.5, 0)) <= 0));
     }
     SUBCASE("Big amount of data and medium deviation") {
-        CHECK((testAndGetErrorDifference(10, 20, Complex<double>(10, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(10, 0)) <= 0));
     }
     SUBCASE("Big amount of data and big deviation") {
-        CHECK((testAndGetErrorDifference(10, 20, Complex<double>(100, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(100, 0)) <= 0));
     }
 }

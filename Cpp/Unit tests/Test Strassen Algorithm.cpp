@@ -4,8 +4,8 @@
 template <typename T> void testMultiplicationErrorDifference(int order, T epsilon) {
     ComplexMatrix<T> Matrix1 = ComplexMatrix<T>::getRandom(order);
     ComplexMatrix<T> Matrix2 = ComplexMatrix<T>::getRandom(order);
-    ComplexMatrix<T> Strassen = Matrix1 * Matrix2;
-    ComplexMatrix<T> Regular = Matrix1.multiply(Matrix2);
+    ComplexMatrix<T> Strassen = Matrix1.StrassenMultiply(Matrix2);
+    ComplexMatrix<T> Regular = Matrix1 * Matrix2;
     bool valid = true;
     for (int i = 0; i < order; i++)
     {
@@ -23,7 +23,7 @@ template <typename T> void testMultiplicationErrorDifference(int order, T epsilo
 TEST_CASE("Test getInverseGaussJordan Errors") {
     ComplexMatrix<double> Matrix1(10,9);
     ComplexMatrix<double> Matrix2(10 ,9);
-    CHECK(Matrix1 == (Matrix1 * Matrix2));
+    CHECK(Matrix1 == (Matrix1.StrassenMultiply(Matrix2)));
 }
 
 TEST_CASE("Test StrassenAlgorithm Work") {

@@ -89,7 +89,11 @@ private:
                 c11(newSize), c12(newSize), c21(newSize), c22(newSize),
                 p1(newSize), p2(newSize), p3(newSize), p4(newSize),
                 p5(newSize), p6(newSize), p7(newSize),
-                aResult(newSize), bResult(newSize);
+
+                s1(newSize), s2(newSize), s3(newSize),
+                s4(newSize), s5(newSize), s6(newSize),
+                s7(newSize), s8(newSize), s9(newSize),
+                s10(newSize);
 
         // Ділимо матриці на підматриці
         for (int i = 0; i < newSize; i++) {
@@ -107,25 +111,37 @@ private:
         }
 
         // p1 = (a11+a22) * (b11+b22)
-        StrassenMultiplication((a11 + a22), (b11 + b22), p1);
+
+        s1 = a11 + a22;
+        s2 = b11 + b22;
+        s3 = a21 + a22;
+        s4 = b12 - b22;
+        s5 = b21 - b11;
+        s6 = a11 + a12;
+        s7 = a21 - a11;
+        s8 = b11 + b12;
+        s9 = a12 - a22;
+        s10 = b21 + b22;
+
+        StrassenMultiplication(s1, s2, p1);
 
         // p2 = (a21+a22) * (b11)
-        StrassenMultiplication(a21 + a22, b11, p2);
+        StrassenMultiplication(s3, b11, p2);
 
         // p3 = (a11) * (b12 - b22)
-        StrassenMultiplication(a11, b12 - b22, p3);
+        StrassenMultiplication(a11, s4, p3);
 
         // p4 = (a22) * (b21 - b11)
-        StrassenMultiplication(a22, b21 - b11, p4);
+        StrassenMultiplication(a22, s5, p4);
 
         // p5 = (a11+a12) * (b22)
-        StrassenMultiplication(a11 + a12, b22, p5);
+        StrassenMultiplication(s6, b22, p5);
 
         // p6 = (a21-a11) * (b11+b12)
-        StrassenMultiplication(a21 - a11, b11 + b12, p6);
+        StrassenMultiplication(s7, s8, p6);
 
         // p7 = (a12-a22) * (b21+b22)
-        StrassenMultiplication(a12 - a22, b21 + b22, p7);
+        StrassenMultiplication(s9, s10, p7);
 
         //  c21, c21, c11, c22:
         c12 = p3 + p5;
@@ -155,7 +171,8 @@ public:
     }
 
     // Створити матрицю NxM з нулів
-    ComplexMatrix(const int& N, const int& M) {
+    // O(n^2)
+    inline ComplexMatrix(const int& N, const int& M) {
         this->rows = N;
         this->columns = M;
         for (int i = 0; i < this->rows; ++i) {
@@ -169,6 +186,7 @@ public:
     }
 
     // Створити матрицю NxN з нулів
+    // O(n^2)
     explicit ComplexMatrix(const int& N) {
         (*this) = ComplexMatrix<T>(N, N);
     }
@@ -183,6 +201,7 @@ public:
     }
 
     // Створити одиничну матрицю
+    // O(n^2)
     static ComplexMatrix<T> getIdentity(const int& N) {
         ComplexMatrix<T> Identity(N);
         for (int i = 0; i < N; i++) {
@@ -192,6 +211,7 @@ public:
     }
 
     // Створити матрицю NxM з випадковими значеннями
+    // O(n^2)
     static ComplexMatrix<T> getRandom(const int& N, const int& M, T range = INT_MAX) {
         ComplexMatrix<T> Random(N, M);
         for (int i = 0; i < N; i++) {
@@ -203,11 +223,13 @@ public:
     }
 
     // Створити матрицю NxN з випадковими значеннями
+    // O(n^2)
     static ComplexMatrix<T> getRandom(const int& N) {
         return getRandom(N, N);
     }
 
-    // Функція для пошуку оберненої матриці методом Жордана Гауса О(n^3)
+    // Функція для пошуку оберненої матриці методом Жордана Гауса
+    // О(n^3)
     ComplexMatrix<T> getInverseGaussJordan() {
         // Якщо матриця не квадратна
         if (this->columns != this->rows) {
@@ -269,6 +291,7 @@ public:
     }
 
     // Функція для пошуку оберненої матриці методом LU-розкладу
+    // O(n^3)
     ComplexMatrix<T> getInverseLU() {
         if (this->columns != this->rows) {
             printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
@@ -320,6 +343,7 @@ public:
     }
 
     // Транспонування матриці
+    // O(n^2)
     ComplexMatrix<T> getTransposed() {
         ComplexMatrix<T> Transposed(this->columns, this->rows);
         for (int i = 0; i < this->rows; i++) {
@@ -331,11 +355,13 @@ public:
     }
 
     // Перевантаження []
+    // O(1)
     inline vector<Complex<T>>& operator [] (const int& i) {
         return this->matrix[i];
     }
 
     // Перевантаження +
+    // O(n^2)
     ComplexMatrix<T> operator + (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
@@ -351,6 +377,7 @@ public:
     }
 
     // Перевантаження -
+    // O(n^2)
     ComplexMatrix<T> operator - (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
@@ -366,6 +393,7 @@ public:
     }
 
     // Перевантаження ==
+    // O(n^2)
     bool operator == (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             return false;
@@ -381,8 +409,26 @@ public:
     }
 
     // Перевантаження *
-    // Функція для множення матриць методом Штрассена
+    // Звичайне множення O(n^3)
     ComplexMatrix<T> operator * (ComplexMatrix<T> Matrix) {
+        if (this->columns != Matrix.rows) {
+            printError(CANNOT_MULTIPLY_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Product(this->rows, Matrix.columns);
+        for (int i = 0; i < this->rows; i++) {
+            for (int j = 0; j < Matrix.columns; j++) {
+                for (int k = 0; k < Matrix.rows; k++) {
+                    Product[i][j] += (*this)[i][k] * Matrix[k][j];
+                }
+            }
+        }
+        return Product;
+    }
+
+    // Функція для множення матриць методом Штрассена
+    // O(n^(log2(7))) ~ O(n^2.8074)
+    ComplexMatrix<T> StrassenMultiply(ComplexMatrix<T> Matrix) {
         if (this->columns != Matrix.rows) {
             printError(CANNOT_MULTIPLY_ERROR_CODE);
             return *this;
@@ -412,23 +458,8 @@ public:
         return Result;
     }
 
-    ComplexMatrix<T> multiply (ComplexMatrix<T> Matrix) {
-        if (this->columns != Matrix.rows) {
-            printError(CANNOT_MULTIPLY_ERROR_CODE);
-            return *this;
-        }
-        ComplexMatrix<T> Product(this->rows, Matrix.columns);
-        for (int i = 0; i < this->rows; i++) {
-            for (int j = 0; j < Matrix.columns; j++) {
-                for (int k = 0; k < Matrix.rows; k++) {
-                    Product[i][j] += (*this)[i][k] * Matrix[k][j];
-                }
-            }
-        }
-        return Product;
-    }
-
     // Видрукувати матрицю
+    // O(n^2)
     inline void print() {
         cout << endl;
         for (int i = 0; i < this->rows; i++) {
