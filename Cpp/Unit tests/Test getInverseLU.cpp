@@ -71,7 +71,7 @@ TEST_CASE("Test getInverseLU Work") {
             testInverseErrorDifference(10, (double)1e-13);
         }
         SUBCASE("100x100 test") {
-            testInverseErrorDifference(100, (double)1e-12);
+            testInverseErrorDifference(100, (double)1e-11);
         }
     }
 }
