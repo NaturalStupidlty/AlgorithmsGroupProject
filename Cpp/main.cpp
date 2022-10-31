@@ -9,7 +9,7 @@ using std::endl;
 int main(int argc, char** argv) {
     // Кирилиця на windows
     #ifdef _WIN32
-    system("chcp 65001");x
+    system("chcp 65001");
     #endif
 
     // Для проходження unit tests
@@ -23,12 +23,14 @@ int main(int argc, char** argv) {
 
     // Бенчмарки
     cout << "~~~~~~~~~~~~~~~~ Benchmarks ~~~~~~~~~~~~~~~~" << endl;
+/*
 
-    timeTestInverseGaussJordan();
-    timeTestInverseLU();
-    timeTestStrassenAlgorithm();
-    timeTestRegularMultiplication();
-    timeLinearRegression();
+    timeTestInverseGaussJordan(100, 10);
+    timeTestInverseLU(100, 10);
+    timeTestStrassenAlgorithm(100, 100, 10);
+    timeTestRegularMultiplication(10);
+    timeLinearRegression(5, 10, 10);
+*/
 
     return 0;
 }

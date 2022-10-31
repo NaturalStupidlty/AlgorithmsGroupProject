@@ -45,6 +45,7 @@ private:
             printError(CANNOT_FIND_LU_DECOMPOSITION_ERROR_CODE);
             return false;
         }
+
         // Верхня трикутна матриця, нижня трикутні матриці
         // зберігаються в Decomposition
         // Decomposition = Lower + Upper - E
@@ -211,7 +212,7 @@ public:
     }
 
     // Створити матрицю NxM з випадковими значеннями
-    // O(n^2)
+    // O(n^m)
     static ComplexMatrix<T> getRandom(const int& N, const int& M, T range = INT_MAX) {
         ComplexMatrix<T> Random(N, M);
         for (int i = 0; i < N; i++) {
