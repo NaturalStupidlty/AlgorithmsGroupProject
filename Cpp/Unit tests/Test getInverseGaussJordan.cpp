@@ -9,7 +9,7 @@ template <typename T> void testInverseErrorDifference(int order, T epsilon) {
     {
         for (int j = 0; j < order; j++)
         {
-            REQUIRE(Identity[i][j] <= epsilon);
+            REQUIRE((Identity[i][j]).abs() <= epsilon);
         }
     }
 }
@@ -51,6 +51,16 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
         Matrix[2][0] = 7;
         Matrix[2][1] = 8;
         Matrix[2][2] = 9;
+
+        CHECK(Matrix == Matrix.getInverseGaussJordan());
+    }
+    SUBCASE("Matrix determinant is zero") {
+        ComplexMatrix<double> Matrix(2);
+        Matrix[0][0] = 1;
+        Matrix[0][1] = Complex<double>(0, 1);
+
+        Matrix[1][0] = Complex<double>(0, 1);
+        Matrix[1][1] = -1;
 
         CHECK(Matrix == Matrix.getInverseGaussJordan());
     }

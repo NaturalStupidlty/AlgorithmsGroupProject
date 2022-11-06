@@ -79,7 +79,9 @@ private:
     // Множення матриць методом Штрассена
     void StrassenMultiplication(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& Product) {
         // База
-        if (A.rows == 1) {
+        // !!!
+        if (A.rows == 64) {
+            Product = A * B;
             Product[0][0] = A[0][0] * B[0][0];
             return;
         }
@@ -172,7 +174,7 @@ public:
     }
 
     // Створити матрицю NxM з нулів
-    // O(n^2)
+    // O(n^m)
     inline ComplexMatrix(const int& N, const int& M) {
         this->rows = N;
         this->columns = M;
@@ -460,7 +462,7 @@ public:
     }
 
     // Видрукувати матрицю
-    // O(n^2)
+    // O(n^m)
     inline void print() {
         cout << endl;
         for (int i = 0; i < this->rows; i++) {
