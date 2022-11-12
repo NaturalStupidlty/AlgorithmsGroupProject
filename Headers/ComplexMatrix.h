@@ -79,10 +79,8 @@ private:
     // Множення матриць методом Штрассена
     void StrassenMultiplication(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& Product) {
         // База
-        // !!!
-        if (A.rows == 64) {
+        if (A.rows <= 64 || A.columns || B.columns) {
             Product = A * B;
-            Product[0][0] = A[0][0] * B[0][0];
             return;
         }
         int newSize = A.rows / 2;
@@ -91,12 +89,7 @@ private:
                 b11(newSize), b12(newSize), b21(newSize), b22(newSize),
                 c11(newSize), c12(newSize), c21(newSize), c22(newSize),
                 p1(newSize), p2(newSize), p3(newSize), p4(newSize),
-                p5(newSize), p6(newSize), p7(newSize),
-
-                s1(newSize), s2(newSize), s3(newSize),
-                s4(newSize), s5(newSize), s6(newSize),
-                s7(newSize), s8(newSize), s9(newSize),
-                s10(newSize);
+                p5(newSize), p6(newSize), p7(newSize);
 
         // Ділимо матриці на підматриці
         for (int i = 0; i < newSize; i++) {
@@ -113,44 +106,18 @@ private:
             }
         }
 
-        // p1 = (a11+a22) * (b11+b22)
+        StrassenMultiplication(a11, b12 - b22, p1);
+        StrassenMultiplication(a11 + a12, b22, p2);
+        StrassenMultiplication(a21 + a22, b11, p3);
+        StrassenMultiplication(a22, b21 - b11, p4);
+        StrassenMultiplication(a11 + a22, b11 + b22, p5);
+        StrassenMultiplication(a12 - a22, b21 + b22, p6);
+        StrassenMultiplication(a11 - a21, b11 + b12, p7);
 
-        s1 = a11 + a22;
-        s2 = b11 + b22;
-        s3 = a21 + a22;
-        s4 = b12 - b22;
-        s5 = b21 - b11;
-        s6 = a11 + a12;
-        s7 = a21 - a11;
-        s8 = b11 + b12;
-        s9 = a12 - a22;
-        s10 = b21 + b22;
-
-        StrassenMultiplication(s1, s2, p1);
-
-        // p2 = (a21+a22) * (b11)
-        StrassenMultiplication(s3, b11, p2);
-
-        // p3 = (a11) * (b12 - b22)
-        StrassenMultiplication(a11, s4, p3);
-
-        // p4 = (a22) * (b21 - b11)
-        StrassenMultiplication(a22, s5, p4);
-
-        // p5 = (a11+a12) * (b22)
-        StrassenMultiplication(s6, b22, p5);
-
-        // p6 = (a21-a11) * (b11+b12)
-        StrassenMultiplication(s7, s8, p6);
-
-        // p7 = (a12-a22) * (b21+b22)
-        StrassenMultiplication(s9, s10, p7);
-
-        //  c21, c21, c11, c22:
-        c12 = p3 + p5;
-        c21 = p2 + p4;
-        c11 = ((p1 + p4) + p7) - p5;
-        c22 = ((p1 + p3) + p6) - p2;
+        c11 = p4 + p5 + p6 - p2;
+        c12 = p1 + p2;
+        c21 = p3 + p4;
+        c22 = p1 + p5 - p3 - p7;
 
         // Складаємо результат у єдину матрицю:
         for (int i = 0; i < newSize; i++) {

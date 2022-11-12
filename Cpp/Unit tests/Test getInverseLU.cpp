@@ -1,6 +1,5 @@
 #include "Headers/ComplexMatrix.h"
 #include "Headers/Doctest/doctest.h"
-/*
 
 template <typename T> void testInverseErrorDifference(int order, T epsilon) {
     ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order);
@@ -76,4 +75,3 @@ TEST_CASE("Test getInverseLU Work") {
         }
     }
 }
-*/
