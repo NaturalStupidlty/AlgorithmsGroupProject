@@ -24,11 +24,33 @@ public:
     Complex() : real(0), imaginary(0) {}
 
     // Генерація випадкових чисел
-    static Complex<T> getRandomNumber(T rangeStart, T rangeEnd, bool real = false)
+    static Complex<T> getRandomNumber(int rangeStart, int rangeEnd, bool real = false)
+    {
+        std::random_device randomDevice;
+        std::mt19937 range(randomDevice());
+        std::uniform_int_distribution<T> distance(rangeStart, rangeEnd);
+        if (real) {
+            return Complex<T>(distance(range));
+        }
+        return Complex<T>(distance(range), distance(range));
+    }
+
+    static Complex<T> getRandomNumber(double rangeStart, double rangeEnd, bool real = false)
     {
         std::random_device randomDevice;
         std::mt19937 range(randomDevice());
         std::uniform_real_distribution<T> distance(rangeStart, rangeEnd);
+        if (real) {
+            return Complex<T>(distance(range));
+        }
+        return Complex<T>(distance(range), distance(range));
+    }
+
+    static Complex<T> getRandomNumber(float rangeStart, float rangeEnd, bool real = false)
+    {
+        std::random_device randomDevice;
+        std::mt19937 range(randomDevice());
+        std::uniform_int_distribution<T> distance(rangeStart, rangeEnd);
         if (real) {
             return Complex<T>(distance(range));
         }
