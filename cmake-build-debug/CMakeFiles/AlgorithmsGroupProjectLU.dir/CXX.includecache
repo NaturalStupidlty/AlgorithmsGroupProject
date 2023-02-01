@@ -1,0 +1,160 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Headers/Benchmarks.h
+Headers/ComplexMatrix.h
+../Headers/Headers/ComplexMatrix.h
+LinearRegression.h
+../Headers/LinearRegression.h
+chrono
+-
+
+../Headers/Complex.h
+Errors.h
+../Headers/Errors.h
+iostream
+-
+random
+-
+vector
+-
+
+../Headers/ComplexMatrix.h
+Complex.h
+../Headers/Complex.h
+vector
+-
+
+../Headers/Doctest/doctest.h
+signal.h
+-
+ciso646
+-
+cstddef
+-
+ostream
+-
+istream
+-
+type_traits
+-
+doctest_fwd.h
+../Headers/Doctest/doctest_fwd.h
+ctime
+-
+cmath
+-
+climits
+-
+math.h
+-
+new
+-
+cstdio
+-
+cstdlib
+-
+cstring
+-
+limits
+-
+utility
+-
+fstream
+-
+sstream
+-
+iostream
+-
+algorithm
+-
+iomanip
+-
+vector
+-
+atomic
+-
+mutex
+-
+set
+-
+map
+-
+unordered_set
+-
+exception
+-
+stdexcept
+-
+csignal
+-
+cfloat
+-
+cctype
+-
+cstdint
+-
+string
+-
+sys/types.h
+-
+unistd.h
+-
+sys/sysctl.h
+-
+AfxWin.h
+-
+windows.h
+-
+io.h
+-
+sys/time.h
+-
+unistd.h
+-
+
+../Headers/Errors.h
+map
+-
+iostream
+-
+
+../Headers/LinearRegression.h
+ComplexMatrix.h
+../Headers/ComplexMatrix.h
+
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Test Linear Regression.cpp
+Headers/Doctest/doctest.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/Doctest/doctest.h
+Headers/LinearRegression.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/LinearRegression.h
+
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Test Strassen Algorithm.cpp
+Headers/ComplexMatrix.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/ComplexMatrix.h
+Headers/Doctest/doctest.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/Doctest/doctest.h
+
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Test getInverseGaussJordan.cpp
+Headers/ComplexMatrix.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/ComplexMatrix.h
+Headers/Doctest/doctest.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/Doctest/doctest.h
+
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Test getInverseLU.cpp
+Headers/ComplexMatrix.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/ComplexMatrix.h
+Headers/Doctest/doctest.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Unit tests/Headers/Doctest/doctest.h
+
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/main.cpp
+Headers/Benchmarks.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Headers/Benchmarks.h
+Headers/Doctest/doctest.h
+/Users/tylerdurden/GitHub/AlgorithmsGroupProject/Cpp/Headers/Doctest/doctest.h
+

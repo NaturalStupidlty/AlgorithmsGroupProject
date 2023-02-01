@@ -24,19 +24,19 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
 TEST_CASE("Test StrassenAlgorithm Work") {
     SUBCASE("float test") {
         SUBCASE("10x10 test") {
-            testMultiplicationErrorDifference(65, 0);
+            testMultiplicationErrorDifference(65, (float)1e-20);
         }
         SUBCASE("100x100 test") {
-            testMultiplicationErrorDifference(128, 0);
+            testMultiplicationErrorDifference(128, (float)1e-20);
         }
     }
 
     SUBCASE("double test") {
         SUBCASE("10x10 test") {
-            testMultiplicationErrorDifference(65, 0);
+            testMultiplicationErrorDifference(65, (double)0);
         }
         SUBCASE("100x100 test") {
-            testMultiplicationErrorDifference(128, 0);
+            testMultiplicationErrorDifference(128, (double)0);
         }
     }
 }

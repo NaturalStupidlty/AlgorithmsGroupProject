@@ -56,7 +56,7 @@ private:
         for (int i = 0; i < rows; i++) {
             // Пошук опорного елемента
             int supportElement = i;
-            while (supportElement < this->rows && Decomposition[supportElement][i] == 0) {
+            while (supportElement < this->rows && (*this)[supportElement][i] == 0) {
                 supportElement++;
             }
             if (supportElement == this->rows) {
@@ -312,6 +312,57 @@ public:
         return Inverse;
     }
 
+    // Функція для пошуку оберненої матриці методом мінорів
+    // O((n^2)*(n-1)^3)
+    ComplexMatrix<T> getInverseMinors()
+    {
+        if (this->columns != this->rows) {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return *this;
+        }
+
+        ComplexMatrix<T> Inverse(this->rows);
+        Complex<T> determinant = this->getDeterminant();
+        for (int i = 0; i < this->rows; i++)
+        {
+            for (int j = 0; j < this->columns; j++)
+            {
+                ComplexMatrix<T> minor(this->rows - 1, this->columns -1);
+                for (int k = 0, a = 0; k < this->rows; k++)
+                {
+                    if (k != i)
+                    {
+                        for (int l = 0, b = 0; l < this->columns; l++)
+                        {
+                            if (l != j)
+                            {
+                                minor[a][b] = (*this)[k][l];
+                                b++;
+                            }
+                        }
+                        a++;
+                    }
+                }
+                //minor.print();
+                Complex<T> cofactor = minor.getDeterminant();
+                if ((i + j) % 2)
+                {
+                    cofactor = cofactor * (-1);
+                }
+                //cofactor.print();
+                Inverse[j][i] = cofactor;
+            }
+        }
+        for (int i = 0; i < this->rows; i++)
+        {
+            for (int j = 0; j < this->columns; j++)
+            {
+                Inverse[i][j] *= (Complex<T> (1) / determinant);
+            }
+        }
+        return Inverse;
+    }
+
     // Транспонування матриці
     // O(n^2)
     ComplexMatrix<T> getTransposed() {
@@ -322,6 +373,73 @@ public:
             }
         }
         return Transposed;
+    }
+
+    // Пошук визначника
+    // O(n^3)
+    Complex<T> getDeterminant()
+    {
+        // Якщо матриця не квадратна
+        if (this->rows != this->columns)
+        {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return Complex<T>();
+        }
+        if (this->rows == 1)
+        {
+            return (*this)[0][0];
+        }
+        if (this->rows == 2)
+        {
+            return (*this)[0][0] * (*this)[1][1]
+                - (*this)[0][1] * (*this)[1][0];
+        }
+
+        // Одинична матриця
+        ComplexMatrix<T> Identity = ComplexMatrix<T>::getIdentity(this->rows);
+        // Копія, щоб не змінювати реальну
+        ComplexMatrix<T> MatrixCopy = ComplexMatrix(*this);
+
+        for (int i = 0; i < this->rows; i++) {
+            // Якщо 0, то шукаємо перший ненульовий і свапаємо
+            if (MatrixCopy[i][i] == 0) {
+                int supportElement = i + 1;
+                while (supportElement < this->rows && MatrixCopy[supportElement][i] == 0) {
+                    supportElement++;
+                }
+                if (supportElement == this->rows) {
+                    printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+                    return Complex<T>();
+                }
+                MatrixCopy.swapRows(i, supportElement);
+                Identity.swapRows(i, supportElement);
+            }
+
+            // Ділимо на a + bi
+            Complex<T> divider = MatrixCopy[i][i];
+
+            for (int j = 0; j < this->rows; j++) {
+                Identity[i][j] /= divider;
+            }
+            for (int j = i + 1; j < this->rows; j++) {
+                MatrixCopy[i][j] /= divider;
+            }
+
+            // Елементи під діагоналлю в 0
+            for (int k = i + 1; k < this->rows; k++) {
+                Complex<T> factor = MatrixCopy[k][i];
+
+                for (int j = 0; j < this->rows; j++) {
+                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
+                    Identity[k][j] -= (Identity[i][j] * factor);
+                }
+            }
+        }
+        Complex<T> determinant = MatrixCopy[0][0];
+        for (int i = 1; i < MatrixCopy.getRows(); i++) {
+            determinant *= MatrixCopy[i][i];
+        }
+        return determinant;
     }
 
     // Перевантаження []
