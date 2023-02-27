@@ -3,11 +3,22 @@
 
 #include "ComplexMatrix.h"
 
+/** Linear Regression structure
+ *
+ * @tparam T - type
+ */
 template <typename T> struct LinearRegression {
     vector<Complex<T>> coefficients;
     Complex<T> meanSquaredError;
 };
 
+/** Run linear regression algorithm
+ *
+ * @tparam T - type
+ * @param Y - matrix of target values
+ * @param X - matrix of features
+ * @return linear regression structure with coefficients and mean squared error
+ */
 template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T> Y, ComplexMatrix<T> X) {
     if (Y.getColumns() != 1 || Y.getRows() != X.getRows() || X.getRows() <= X.getColumns()) {
         printError(CANNOT_BUILD_LINEAR_REGRESSION_ERROR_CODE);

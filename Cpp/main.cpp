@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
     {
         return result;
     }
+
     // Бенчмарки
     cout << "~~~~~~~~~~~~~~~~ Benchmarks ~~~~~~~~~~~~~~~~" << endl;
     timeTestInverseGaussJordan(128, 10);

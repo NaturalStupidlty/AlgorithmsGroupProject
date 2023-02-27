@@ -8,6 +8,10 @@ using std::cout;
 using std::vector;
 using std::max;
 
+/** Complex Matrix class
+ *
+ * @tparam T type
+ */
 template <typename T> class ComplexMatrix
 {
 private:
@@ -15,12 +19,20 @@ private:
     unsigned int columns {};
     vector<vector<Complex<T>>> matrix;
 
-    // Наступний степінь числа 2
+    /** Next power of number 2, used only for StrassenMultiplication algorithm
+     *
+     * @param power - power
+     * @return next power of 2
+     */
     inline static int nextPowerOf2(int power) {
         return (int)pow(2, ceil(log2(power)));
     }
 
-    // Поміняти місцями 2 рядки
+    /** Swaps two rows of a matrix
+     *
+     * @param firstRow
+     * @param secondRow
+     */
     void swapRows(const int& firstRow, const int& secondRow) {
         for (int i = 0; i < this->columns; i++) {
             Complex<T> rowCopy = this->matrix[firstRow][i];
@@ -29,7 +41,11 @@ private:
         }
     }
 
-    // Поміняти місцями 2 стовпчики
+    /** Swaps two columns of a matrix
+     *
+     * @param firstColumn
+     * @param secondColumn
+     */
     void swapColumns(const int& firstColumn, const int& secondColumn) {
         for (int i = 0; i < this->rows; i++) {
             Complex<T> columnCopy = this->matrix[i][firstColumn];
@@ -38,7 +54,12 @@ private:
         }
     }
 
-    // Повертає true, якщо можна знайти розклад і false, якщо ні
+    /** Find LU decomposition of a matrix
+     *
+     * @param Decomposition - matrix that will contain the decomposition
+     * @param Permutations - matrix that will contain the permutations
+     * @return True if there exists a decomposition and false if not
+     */
     bool getLUDecomposition(ComplexMatrix<T>& Decomposition, ComplexMatrix<T>& Permutations) {
         // Верхня, нижня трикутні матриці та матриця перестановок
         if (this->columns != this->rows) {
@@ -76,7 +97,12 @@ private:
         return true;
     }
 
-    // Множення матриць методом Штрассена
+    /** Multiply two matrices using Strassen algorithm
+     *
+     * @param A - left matrix
+     * @param B - right matrix
+     * @param Product - matrix that will contain their product
+     */
     void StrassenMultiplication(ComplexMatrix<T> A, ComplexMatrix<T> B, ComplexMatrix<T>& Product) {
         // База
         if (A.rows <= 64 || A.columns || B.columns) {
@@ -130,18 +156,27 @@ private:
         }
     }
 public:
-    // Дефолтний конструктор
+    /** Default constructor
+     *
+     */
     ComplexMatrix() = default;
 
-    // Конструктор копій
+    /** Copy constructor
+     *
+     * @param Matrix - matrix to be copied
+     */
     ComplexMatrix (const ComplexMatrix& Matrix) {
         this->rows = Matrix.rows;
         this->columns = Matrix.columns;
         this->matrix = Matrix.matrix;
     }
 
-    // Створити матрицю NxM з нулів
-    // O(n^m)
+    /** Create N by M matrix with zeroes
+     * O(n*m)
+     *
+     * @param N - rows
+     * @param M - columns
+     */
     inline ComplexMatrix(const int& N, const int& M) {
         this->rows = N;
         this->columns = M;
@@ -155,23 +190,36 @@ public:
         }
     }
 
-    // Створити матрицю NxN з нулів
-    // O(n^2)
+    /** Create N by N matrix with zeroes
+     * O(n^2)
+     *
+     * @param N - rows, columns
+     */
     explicit ComplexMatrix(const int& N) {
         (*this) = ComplexMatrix<T>(N, N);
     }
 
-    // Гетери
+    /** Find number of columns
+     *
+     * @return number of columns
+     */
     unsigned int getColumns() {
         return this->columns;
     }
 
+    /** Find number of rows
+     *
+     * @return number of rows
+     */
     unsigned int getRows() {
         return this->rows;
     }
 
-    // Створити одиничну матрицю
-    // O(n^2)
+    /** Create N by N identity matrix
+    * O(n^2)
+    *
+    * @param N - rows, columns
+    */
     static ComplexMatrix<T> getIdentity(const int& N) {
         ComplexMatrix<T> Identity(N);
         for (int i = 0; i < N; i++) {
@@ -180,8 +228,13 @@ public:
         return Identity;
     }
 
-    // Створити матрицю NxM з випадковими значеннями
-    // O(n^m)
+    /** Create N by M matrix with random numbers
+     * O(n*m)
+     *
+     * @param N - rows
+     * @param M - columns
+     * @param range - range of random numbers (-range, range)
+     */
     static ComplexMatrix<T> getRandom(const int& N, const int& M, T range = INT_MAX) {
         ComplexMatrix<T> Random(N, M);
         for (int i = 0; i < N; i++) {
@@ -192,14 +245,20 @@ public:
         return Random;
     }
 
-    // Створити матрицю NxN з випадковими значеннями
-    // O(n^2)
+    /** Create N by N matrix with random numbers
+     * O(n*m)
+     *
+     * @param N - rows, columns
+     */
     static ComplexMatrix<T> getRandom(const int& N) {
         return getRandom(N, N);
     }
 
-    // Функція для пошуку оберненої матриці методом Жордана Гауса
-    // О(n^3)
+    /** Find inverse matrix using Gauss-Gordan method
+     * О(n^3)
+     *
+     * @return inverse matrix
+     */
     ComplexMatrix<T> getInverseGaussJordan() {
         // Якщо матриця не квадратна
         if (this->columns != this->rows) {
@@ -260,8 +319,11 @@ public:
         return Identity;
     }
 
-    // Функція для пошуку оберненої матриці методом LU-розкладу
-    // O(n^3)
+    /** Find inverse matrix using LU-decomposition method
+     * О(n^3)
+     *
+     * @return inverse matrix
+     */
     ComplexMatrix<T> getInverseLU() {
         if (this->columns != this->rows) {
             printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
@@ -312,8 +374,11 @@ public:
         return Inverse;
     }
 
-    // Транспонування матриці
-    // O(n^2)
+    /** Find transposed matrix
+     * O(n^2)
+     *
+     * @return transposed matrix
+     */
     ComplexMatrix<T> getTransposed() {
         ComplexMatrix<T> Transposed(this->columns, this->rows);
         for (int i = 0; i < this->rows; i++) {
@@ -324,14 +389,22 @@ public:
         return Transposed;
     }
 
-    // Перевантаження []
-    // O(1)
+    /** Get [i] row
+     * O(1)
+     *
+     * @param i - row number from 0 to n
+     * @return
+     */
     inline vector<Complex<T>>& operator [] (const int& i) {
         return this->matrix[i];
     }
 
-    // Перевантаження +
-    // O(n^2)
+    /** Add two matrices
+     * O(n*m)
+     *
+     * @param Matrix - right matrix
+     * @return sum
+     */
     ComplexMatrix<T> operator + (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
@@ -346,8 +419,12 @@ public:
         return Result;
     }
 
-    // Перевантаження -
-    // O(n^2)
+    /** Subtract two matrices
+     * O(n*m)
+     *
+     * @param Matrix - right matrix
+     * @return difference
+     */
     ComplexMatrix<T> operator - (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             printError(CANNOT_ADD_OR_SUBTRACT_ERROR_CODE);
@@ -362,8 +439,12 @@ public:
         return Result;
     }
 
-    // Перевантаження ==
-    // O(n^2)
+    /** Check if two matrices are equal
+     * O(n*m)
+     *
+     * @param Matrix - right matrix
+     * @return True if they are equal, false otherwise
+     */
     bool operator == (ComplexMatrix<T> Matrix) {
         if (this->rows != Matrix.rows || this->columns != Matrix.columns) {
             return false;
@@ -378,8 +459,12 @@ public:
         return true;
     }
 
-    // Перевантаження *
-    // Звичайне множення O(n^3)
+    /** Multiply two matrices
+     * O(n^3)
+     *
+     * @param Matrix - right matrix
+     * @return product
+     */
     ComplexMatrix<T> operator * (ComplexMatrix<T> Matrix) {
         if (this->columns != Matrix.rows) {
             printError(CANNOT_MULTIPLY_ERROR_CODE);
@@ -396,8 +481,14 @@ public:
         return Product;
     }
 
-    // Функція для множення матриць методом Штрассена
-    // O(n^(log2(7))) ~ O(n^2.8074)
+    /** Multiply two matrices using Strassen Multiply
+     * O(n^(log2(7))) ~ O(n^2.8074)
+     * if n <= 64
+     * O(n^3)
+     *
+     * @param Matrix - right matrix
+     * @return product
+     */
     ComplexMatrix<T> StrassenMultiply(ComplexMatrix<T> Matrix) {
         if (this->columns != Matrix.rows) {
             printError(CANNOT_MULTIPLY_ERROR_CODE);
@@ -428,8 +519,10 @@ public:
         return Result;
     }
 
-    // Видрукувати матрицю
-    // O(n^m)
+    /** Print matrix
+     * O(n*m)
+     *
+     */
     inline void print() {
         cout << endl;
         for (int i = 0; i < this->rows; i++) {
