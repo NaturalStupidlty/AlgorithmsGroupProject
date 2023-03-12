@@ -1,5 +1,6 @@
 #include "Headers/ComplexMatrix.h"
 #include "Headers/Doctest/doctest.h"
+
 template <typename T> void testInverseErrorDifference(int order, T epsilon) {
     ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order, order);
     ComplexMatrix<T> Identity = Matrix * (Matrix.getInverse("Gauss-Jordan"));

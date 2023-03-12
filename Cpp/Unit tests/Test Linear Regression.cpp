@@ -25,26 +25,42 @@ Complex<double> testAndGetErrorDifference(int varsAmount, int dataAmount, Comple
         Y[i][0] = yReg + deviation;
     }
 
-    LinearRegression<double> lr = buildLinearRegression(Y, X);
+    LinearRegression<double> lr(Y, X);
 
-    return lr.meanSquaredError - maxMSE;
+    return lr.getMeanSquaredError() - maxMSE;
 }
 
 TEST_CASE("Test Linear Regression Errors") {
     SUBCASE("Y has more than one column") {
         ComplexMatrix<double> Y = ComplexMatrix<double>(2, 2);
         ComplexMatrix<double> X = ComplexMatrix<double>(2, 1);
-        CHECK(buildLinearRegression(Y, X).coefficients.size() == 0);
+        try {
+            LinearRegression<double> lr(Y, X);
+        }
+        catch (LinearRegression<double>& lr) {
+            CHECK(lr.getCoefficients().size() == 0);
+        }
+
     }
     SUBCASE("Y and X has different amount of rows") {
         ComplexMatrix<double> Y = ComplexMatrix<double>(4, 1);
         ComplexMatrix<double> X = ComplexMatrix<double>(5, 2);
-        CHECK(buildLinearRegression(Y, X).coefficients.size() == 0);
+        try {
+            LinearRegression<double> lr(Y, X);
+        }
+        catch (LinearRegression<double>& lr) {
+            CHECK(lr.getCoefficients().size() == 0);
+        }
     }
     SUBCASE("X has less or equal rows than columns (not enough data for building linear regression)") {
         ComplexMatrix<double> Y = ComplexMatrix<double>(4, 1);
         ComplexMatrix<double> X = ComplexMatrix<double>(4, 4);
-        CHECK(buildLinearRegression(Y, X).coefficients.size() == 0);
+        try {
+            LinearRegression<double> lr(Y, X);
+        }
+        catch (LinearRegression<double>& lr) {
+            CHECK(lr.getCoefficients().size() == 0);
+        }
     }
 }
 

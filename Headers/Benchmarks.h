@@ -26,7 +26,7 @@ void testRegularMultiplication(ComplexMatrix<double> Matrix) {
 }
 
 void testBuildingLinearRegression(const ComplexMatrix<double>& Y, const ComplexMatrix<double>& X) {
-    buildLinearRegression(Y, X);
+    LinearRegression<double> regression(Y, X);
 }
 
 void timeTestInverseGaussJordan(int order = 10, int accuracy = 100)

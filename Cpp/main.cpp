@@ -7,12 +7,12 @@ using std::cout;
 using std::endl;
 
 int main(int argc, char** argv) {
-    // Кирилиця на windows
+    // Cyrillic on Windows
     #ifdef _WIN32
     system("chcp 65001");
     #endif
 
-    // Для проходження unit tests
+    // Unit tests
     doctest::Context context;
     context.applyCommandLine(argc, argv);
     int result = context.run();
@@ -21,17 +21,12 @@ int main(int argc, char** argv) {
         return result;
     }
 
-    // Бенчмарки
+    // Benchmarks
     cout << "~~~~~~~~~~~~~~~~ Benchmarks ~~~~~~~~~~~~~~~~" << endl;
     timeTestInverseGaussJordan(128, 10);
     timeTestInverseLU(100, 10);
     timeTestStrassenAlgorithm(100, 100, 10);
     timeTestRegularMultiplication(100, 100, 10);
     timeLinearRegression(5, 10, 10);
-
-    int order = 3;
-    ComplexMatrix<int> Matrix = ComplexMatrix<int>::getRandom(order, order);
-    ComplexMatrix<int> Identity = Matrix * (Matrix.getInverse("Gauss-Jordan"));
-    Matrix.getInverse("Gauss-Jordan");
     return 0;
 }
