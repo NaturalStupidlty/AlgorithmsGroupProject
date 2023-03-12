@@ -64,10 +64,18 @@ public:
         this->meanSquaredError = mse;
     }
 
+    /** Find linear regression coefficients
+     *
+     * @return vector of coefficients
+     */
     vector<Complex<T>> getCoefficients() {
         return this->coefficients;
     }
 
+    /** Find linear regression error
+     *
+     * @return meanSquaredError
+     */
     Complex<T> getMeanSquaredError() {
         return this->meanSquaredError;
     }
