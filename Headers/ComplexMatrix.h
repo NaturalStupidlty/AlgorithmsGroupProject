@@ -19,15 +19,6 @@ private:
     unsigned int columns {};
     vector<vector<Complex<T>>> matrix;
 
-    /** Next power of number 2, used only for StrassenMultiplication algorithm
-     *
-     * @param power - power
-     * @return next power of 2
-     */
-    inline static int nextPowerOf2(int power) {
-        return (int)pow(2, ceil(log2(power)));
-    }
-
     /** Swaps two rows of a matrix
      *
      * @param firstRow
@@ -494,7 +485,8 @@ public:
             printError(CANNOT_MULTIPLY_ERROR_CODE);
             return *this;
         }
-        int size = nextPowerOf2(max({ this->rows, this->columns, Matrix.columns}));
+        int power = max({ this->rows, this->columns, Matrix.columns});
+        int size = (int)pow(2, ceil(log2(power)));
         ComplexMatrix<T> AResized(size), BResized(size), Product(size);
 
         for (int i = 0; i < this->rows; i++) {
