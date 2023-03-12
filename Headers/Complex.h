@@ -42,54 +42,30 @@ public:
      *
      * @param rangeStart
      * @param rangeEnd
-     * @param real - true will create a number only with real part, complex number otherwise
+     * @param real - true will create a random number using uniform real distribution,
+     * false will create a random number using uniform int distribution
+     * @param complex - true will create a number only with real part, complex number otherwise
      * @return
      */
-    static Complex<T> getRandomNumber(int rangeStart, int rangeEnd, bool real = false)
+    static Complex<T> getRandomNumber(int rangeStart, int rangeEnd, bool real = false, bool complex = true)
     {
         std::random_device randomDevice;
         std::mt19937 range(randomDevice());
-        std::uniform_int_distribution<T> distance(rangeStart, rangeEnd);
+        T real_part, imaginary_part;
         if (real) {
-            return Complex<T>(distance(range));
+            std::uniform_real_distribution<T> distance(rangeStart, rangeEnd);
+            real_part = distance(range);
+            imaginary_part = distance(range);
         }
-        return Complex<T>(distance(range), distance(range));
-    }
-
-    /** Generate random complex number using uniform_real_distribution
-     *
-     * @param rangeStart
-     * @param rangeEnd
-     * @param real - true will create a number only with real part, complex number otherwise
-     * @return
-     */
-    static Complex<T> getRandomNumber(double rangeStart, double rangeEnd, bool real = false)
-    {
-        std::random_device randomDevice;
-        std::mt19937 range(randomDevice());
-        std::uniform_real_distribution<T> distance(rangeStart, rangeEnd);
-        if (real) {
-            return Complex<T>(distance(range));
+        else {
+            std::uniform_int_distribution<T> distance(rangeStart, rangeEnd);
+            real_part = distance(range);
+            imaginary_part = distance(range);
         }
-        return Complex<T>(distance(range), distance(range));
-    }
-
-    /** Generate random floating point complex number using uniform_real_distribution
-     *
-     * @param rangeStart
-     * @param rangeEnd
-     * @param real - true will create a number only with real part, complex number otherwise
-     * @return
-     */
-    static Complex<T> getRandomNumber(float rangeStart, float rangeEnd, bool real = false)
-    {
-        std::random_device randomDevice;
-        std::mt19937 range(randomDevice());
-        std::uniform_int_distribution<T> distance(rangeStart, rangeEnd);
-        if (real) {
-            return Complex<T>(distance(range));
+        if (complex) {
+            return Complex<T>(real_part, imaginary_part);
         }
-        return Complex<T>(distance(range), distance(range));
+        return Complex<T>(real_part);
     }
 
     /** Find absolute value of a complex number as

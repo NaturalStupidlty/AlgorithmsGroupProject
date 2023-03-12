@@ -28,6 +28,5 @@ int main(int argc, char** argv) {
     timeTestStrassenAlgorithm(100, 100, 10);
     timeTestRegularMultiplication(100, 100, 10);
     timeLinearRegression(5, 10, 10);
-
     return 0;
 }

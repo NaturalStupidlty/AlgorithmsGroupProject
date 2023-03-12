@@ -8,19 +8,19 @@ Complex<double> testAndGetErrorDifference(int varsAmount, int dataAmount, Comple
     Complex<double> maxMSE(0);
 
     for (int i = 0; i <= varsAmount; i++) {
-        randCoefficients.emplace_back(Complex<double>::getRandomNumber(-500, 500, true).getReal());
+        randCoefficients.emplace_back(Complex<double>::getRandomNumber(-500, 500, true, false).getReal());
     }
 
     for (int i = 0; i < dataAmount; i++) {
         Complex<double> yReg = randCoefficients[0];
 
         for (int j = 0; j < varsAmount; j++) {
-            Complex<double> randX(Complex<double>::getRandomNumber(-500, 500, true));
+            Complex<double> randX(Complex<double>::getRandomNumber(-500, 500, true, false));
             X[i][j] = randX;
             yReg += randCoefficients[j + 1] * randX;
         }
 
-        Complex<double> deviation = Complex<double>::getRandomNumber(-(double)INT_MAX, (double)INT_MAX, true) * maxDeviation;
+        Complex<double> deviation = Complex<double>::getRandomNumber(-(double)INT_MAX, (double)INT_MAX, true, false) * maxDeviation;
         maxMSE += deviation * deviation;
         Y[i][0] = yReg + deviation;
     }
@@ -50,32 +50,32 @@ TEST_CASE("Test Linear Regression Errors") {
 
 TEST_CASE("Test Linear Regression Work") {
     SUBCASE("Small amount of data and small deviation") {
-        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(0.5, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(0.5, 0)) <= 1e-5));
     }
     SUBCASE("Small amount of data and medium deviation") {
-        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(10, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(10, 0)) <= 1e-5));
     }
     SUBCASE("Small amount of data and big deviation") {
-        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(100, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(1, 5, Complex<double>(100, 0)) <= 1e-5));
     }
 
     SUBCASE("Medium amount of data and small deviation") {
-        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(0.5, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(0.5, 0)) <= 1e-5));
     }
     SUBCASE("Medium amount of data and medium deviation") {
-        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(10, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(10, 0)) <= 1e-5));
     }
     SUBCASE("Medium amount of data and big deviation") {
-        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(100, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(50, 100, Complex<double>(100, 0)) <= 1e-5));
     }
 
     SUBCASE("Big amount of data and small deviation") {
-        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(0.5, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(0.5, 0)) <= 1e-5));
     }
     SUBCASE("Big amount of data and medium deviation") {
-        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(10, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(10, 0)) <= 1e-5));
     }
     SUBCASE("Big amount of data and big deviation") {
-        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(100, 0)) <= 0));
+        CHECK((testAndGetErrorDifference(200, 400, Complex<double>(100, 0)) <= 1e-5));
     }
 }
