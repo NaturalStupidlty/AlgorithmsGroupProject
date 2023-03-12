@@ -37,7 +37,7 @@ void timeTestInverseGaussJordan(int order = 10, int accuracy = 100)
     auto creationStop = start;
     for (int i = 0; i < accuracy; ++i) {
         creationStart = high_resolution_clock::now();
-        ComplexMatrix<double> Test = ComplexMatrix<double>::getRandom(order);
+        ComplexMatrix<double> Test = ComplexMatrix<double>::getRandom(order, order);
         creationStop = high_resolution_clock::now();
         start -= (creationStart - creationStop);
         testInverseGaussJordan(Test);
@@ -60,7 +60,7 @@ void timeTestInverseLU(int order = 10, int accuracy = 100)
     auto creationStop = start;
     for (int i = 0; i < accuracy; ++i) {
         creationStart = high_resolution_clock::now();
-        ComplexMatrix<double> Test = ComplexMatrix<double>::getRandom(order);
+        ComplexMatrix<double> Test = ComplexMatrix<double>::getRandom(order, order);
         creationStop = high_resolution_clock::now();
         start -= (creationStart - creationStop);
         testInverseLU(Test);

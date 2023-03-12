@@ -1,7 +1,7 @@
 #include "Headers/ComplexMatrix.h"
 #include "Headers/Doctest/doctest.h"
 template <typename T> void testInverseErrorDifference(int order, T epsilon) {
-    ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order);
+    ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order, order);
     ComplexMatrix<T> Identity = Matrix * (Matrix.getInverseGaussJordan());
     Identity = Identity - ComplexMatrix<T>::getIdentity(order);
     for (int i = 0; i < order; i++)
@@ -20,7 +20,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
     }
 
     SUBCASE("Matrix has a zero row") {
-        ComplexMatrix<double> Matrix = ComplexMatrix<double>::getRandom(10);
+        ComplexMatrix<double> Matrix = ComplexMatrix<double>::getRandom(10, 10);
         for (int i = 0; i < 10; i++)
         {
             Matrix[7][i] = 0;
@@ -29,7 +29,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
     }
 
     SUBCASE("Matrix has a zero column") {
-        ComplexMatrix<double> Matrix = ComplexMatrix<double>::getRandom(10);
+        ComplexMatrix<double> Matrix = ComplexMatrix<double>::getRandom(10, 10);
         for (int i = 0; i < 10; i++)
         {
             Matrix[i][8] = 0;

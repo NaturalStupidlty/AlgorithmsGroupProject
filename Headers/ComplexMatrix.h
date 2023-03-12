@@ -236,15 +236,6 @@ public:
         return Random;
     }
 
-    /** Create N by N matrix with random numbers
-     * O(n*m)
-     *
-     * @param N - rows, columns
-     */
-    static ComplexMatrix<T> getRandom(const int& N) {
-        return getRandom(N, N);
-    }
-
     /** Find inverse matrix using Gauss-Gordan method
      * О(n^3)
      *
@@ -485,6 +476,7 @@ public:
             printError(CANNOT_MULTIPLY_ERROR_CODE);
             return *this;
         }
+        // Next power of 2
         int power = max({ this->rows, this->columns, Matrix.columns});
         int size = (int)pow(2, ceil(log2(power)));
         ComplexMatrix<T> AResized(size), BResized(size), Product(size);
