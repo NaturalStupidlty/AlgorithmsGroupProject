@@ -42,7 +42,7 @@ template <typename T> LinearRegression<T> buildLinearRegression(ComplexMatrix<T>
 
     NewXTransposed = NewX.getTransposed();
 
-    CoefficientsMatrix = (NewXTransposed * NewX).getInverseGaussJordan() * NewXTransposed * Y;
+    CoefficientsMatrix = (NewXTransposed * NewX).getInverse("Gauss-Jordan") * NewXTransposed * Y;
 
     for (int i = 0; i < CoefficientsMatrix.getRows(); i++) {
         coefficientsVector.push_back(CoefficientsMatrix[i][0]);

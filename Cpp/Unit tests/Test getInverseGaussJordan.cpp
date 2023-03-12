@@ -2,7 +2,7 @@
 #include "Headers/Doctest/doctest.h"
 template <typename T> void testInverseErrorDifference(int order, T epsilon) {
     ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order, order);
-    ComplexMatrix<T> Identity = Matrix * (Matrix.getInverseGaussJordan());
+    ComplexMatrix<T> Identity = Matrix * (Matrix.getInverse("Gauss-Jordan"));
     Identity = Identity - ComplexMatrix<T>::getIdentity(order);
     for (int i = 0; i < order; i++)
     {
@@ -16,7 +16,7 @@ template <typename T> void testInverseErrorDifference(int order, T epsilon) {
 TEST_CASE("Test getInverseGaussJordan Errors") {
     SUBCASE("Matrix is NOT square") {
         ComplexMatrix<double> Matrix(10,9);
-        CHECK(Matrix == Matrix.getInverseGaussJordan());
+        CHECK(Matrix == Matrix.getInverse("Gauss-Jordan"));
     }
 
     SUBCASE("Matrix has a zero row") {
@@ -25,7 +25,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
         {
             Matrix[7][i] = 0;
         }
-        CHECK(Matrix == Matrix.getInverseGaussJordan());
+        CHECK(Matrix == Matrix.getInverse("Gauss-Jordan"));
     }
 
     SUBCASE("Matrix has a zero column") {
@@ -34,7 +34,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
         {
             Matrix[i][8] = 0;
         }
-        CHECK(Matrix == Matrix.getInverseGaussJordan());
+        CHECK(Matrix == Matrix.getInverse("Gauss-Jordan"));
     }
 
     SUBCASE("Matrix determinant is zero") {
@@ -51,7 +51,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
         Matrix[2][1] = 8;
         Matrix[2][2] = 9;
 
-        CHECK(Matrix == Matrix.getInverseGaussJordan());
+        CHECK(Matrix == Matrix.getInverse("Gauss-Jordan"));
     }
     SUBCASE("Matrix determinant is zero") {
         ComplexMatrix<double> Matrix(2);
@@ -61,7 +61,7 @@ TEST_CASE("Test getInverseGaussJordan Errors") {
         Matrix[1][0] = Complex<double>(0, 1);
         Matrix[1][1] = -1;
 
-        CHECK(Matrix == Matrix.getInverseGaussJordan());
+        CHECK(Matrix == Matrix.getInverse("Gauss-Jordan"));
     }
 }
 

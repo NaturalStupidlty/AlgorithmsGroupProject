@@ -28,5 +28,10 @@ int main(int argc, char** argv) {
     timeTestStrassenAlgorithm(100, 100, 10);
     timeTestRegularMultiplication(100, 100, 10);
     timeLinearRegression(5, 10, 10);
+
+    int order = 3;
+    ComplexMatrix<int> Matrix = ComplexMatrix<int>::getRandom(order, order);
+    ComplexMatrix<int> Identity = Matrix * (Matrix.getInverse("Gauss-Jordan"));
+    Matrix.getInverse("Gauss-Jordan");
     return 0;
 }

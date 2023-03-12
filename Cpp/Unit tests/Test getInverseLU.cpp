@@ -3,7 +3,7 @@
 
 template <typename T> void testInverseErrorDifference(int order, T epsilon) {
     ComplexMatrix<T> Matrix = ComplexMatrix<T>::getRandom(order, order);
-    ComplexMatrix<T> Identity = Matrix * (Matrix.getInverseLU());
+    ComplexMatrix<T> Identity = Matrix * (Matrix.getInverse("LU"));
     Identity = Identity - ComplexMatrix<T>::getIdentity(order);
     for (int i = 0; i < order; i++)
     {
@@ -17,7 +17,7 @@ template <typename T> void testInverseErrorDifference(int order, T epsilon) {
 TEST_CASE("Test getInverseLU Errors") {
     SUBCASE("Matrix is NOT square") {
         ComplexMatrix<double> Matrix(10,9);
-        CHECK(Matrix == Matrix.getInverseLU());
+        CHECK(Matrix == Matrix.getInverse("LU"));
     }
 
     SUBCASE("Matrix has a zero row") {
@@ -26,7 +26,7 @@ TEST_CASE("Test getInverseLU Errors") {
         {
             Matrix[7][i] = 0;
         }
-        CHECK(Matrix == Matrix.getInverseLU());
+        CHECK(Matrix == Matrix.getInverse("LU"));
     }
 
     SUBCASE("Matrix has a zero column") {
@@ -35,7 +35,7 @@ TEST_CASE("Test getInverseLU Errors") {
         {
             Matrix[i][8] = 0;
         }
-        CHECK(Matrix == Matrix.getInverseLU());
+        CHECK(Matrix == Matrix.getInverse("LU"));
     }
 
     SUBCASE("Matrix determinant is zero") {
@@ -52,7 +52,7 @@ TEST_CASE("Test getInverseLU Errors") {
         Matrix[2][1] = 8;
         Matrix[2][2] = 9;
 
-        CHECK(Matrix == Matrix.getInverseLU());
+        CHECK(Matrix == Matrix.getInverse("LU"));
     }
 }
 

@@ -10,11 +10,11 @@ using std::cout;
 using std::endl;
 
 void testInverseGaussJordan(ComplexMatrix<double> Matrix) {
-    Matrix.getInverseGaussJordan();
+    Matrix.getInverse("Gauss-Jordan");
 }
 
 void testInverseLU(ComplexMatrix<double> Matrix) {
-    Matrix.getInverseLU();
+    Matrix.getInverse("LU");
 }
 
 void testStrassenAlgorithm(ComplexMatrix<double> Matrix) {

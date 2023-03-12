@@ -3,6 +3,7 @@
 
 #include "Complex.h"
 #include <vector>
+#include <string>
 
 using std::cout;
 using std::vector;
@@ -146,6 +147,126 @@ private:
             }
         }
     }
+
+    /** Find inverse matrix using Gauss-Jordan method
+     * О(n^3)
+     *
+     * @return inverse matrix
+     */
+    ComplexMatrix<T> getInverseGaussJordan() {
+        // Якщо матриця не квадратна
+        if (this->columns != this->rows) {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return *this;
+        }
+
+        // Одинична матриця
+        ComplexMatrix<T> Identity = ComplexMatrix<T>::getIdentity(this->rows);
+        // Копія, щоб не змінювати реальну
+        ComplexMatrix<T> MatrixCopy = ComplexMatrix(*this);
+
+        for (int i = 0; i < this->rows; i++) {
+            // Якщо 0, то шукаємо перший ненульовий і свапаємо
+            if (MatrixCopy[i][i] == 0) {
+                int supportElement = i + 1;
+                while (supportElement < this->rows && MatrixCopy[supportElement][i] == 0) {
+                    supportElement++;
+                }
+                if (supportElement == this->rows) {
+                    printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+                    return *this;
+                }
+                MatrixCopy.swapRows(i, supportElement);
+                Identity.swapRows(i, supportElement);
+            }
+
+            // Ділимо на a + bi
+            Complex<T> divider = MatrixCopy[i][i];
+
+            for (int j = 0; j < this->rows; j++) {
+                Identity[i][j] /= divider;
+            }
+            for (int j = i + 1; j < this->rows; j++) {
+                MatrixCopy[i][j] /= divider;
+            }
+
+            // Елементи під діагоналлю в 0
+            for (int k = i + 1; k < this->rows; k++) {
+                Complex<T> factor = MatrixCopy[k][i];
+
+                for (int j = 0; j < this->rows; j++) {
+                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
+                    Identity[k][j] -= (Identity[i][j] * factor);
+                }
+            }
+
+            // Елементи над діагоналлю в 0
+            for (int k = i - 1; k >= 0; k--) {
+                Complex<T> factor = MatrixCopy[k][i];
+
+                for (int j = 0; j < this->rows; j++) {
+                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
+                    Identity[k][j] -= (Identity[i][j] * factor);
+                }
+            }
+        }
+        return Identity;
+    }
+
+    /** Find inverse matrix using LU-decomposition method
+     * О(n^3)
+     *
+     * @return inverse matrix
+     */
+    ComplexMatrix<T> getInverseLU() {
+        if (this->columns != this->rows) {
+            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
+            return *this;
+        }
+        ComplexMatrix<T> Decomposition, Permutation;
+        if (getLUDecomposition(Decomposition, Permutation) == false) {
+            printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
+            return *this;
+        }
+
+        // Спробував через заміни, чомусь працює
+        ComplexMatrix<T> Inverse(this->rows);
+        vector<Complex<T>> D(this->rows);
+
+        for (int i = 0; i < this->rows; i++) {
+            // forward substitution
+            for (int j = 0; j < this->rows; j++) {
+                Complex<T> numerator = i == j ? Complex<T>(1, 0) : Complex<T>(0, 0);
+                for (int k = 0; k < j; k++) {
+                    numerator -= Decomposition[j][k] * D[k];
+                }
+                D[j] = numerator;
+            }
+            // backward substitution
+            for (int j = this->rows - 1; j >= 0; j--) {
+                Complex<T> numerator = D[j] ;
+                for (int k = j + 1; k < this->rows; k++) {
+                    numerator -= Decomposition[j][k] * Inverse[k][i];
+                }
+                Inverse[j][i] = numerator / Decomposition[j][j];
+            }
+        }
+
+        for (int i = this->rows - 1; i >= 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (Permutation[i][j] != Complex<T>(1, 0)) {
+                    continue;
+                }
+
+                Permutation.swapRows(i, j);
+                Inverse.swapColumns(i, j);
+                i++;
+                break;
+            }
+        }
+
+        return Inverse;
+    }
 public:
     /** Default constructor
      *
@@ -236,124 +357,20 @@ public:
         return Random;
     }
 
-    /** Find inverse matrix using Gauss-Gordan method
-     * О(n^3)
+    /** Find inverse matrix using one of supported algorithms
      *
+     * @param algorithm - name of the inverse method. Supported: "LU", "Gauss-Jordan".
      * @return inverse matrix
      */
-    ComplexMatrix<T> getInverseGaussJordan() {
-        // Якщо матриця не квадратна
-        if (this->columns != this->rows) {
-            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
-            return *this;
+    ComplexMatrix<T> getInverse(const std::string& algorithm) {
+        if (algorithm == "LU") {
+            return this->getInverseLU();
         }
-
-        // Одинична матриця
-        ComplexMatrix<T> Identity = ComplexMatrix<T>::getIdentity(this->rows);
-        // Копія, щоб не змінювати реальну
-        ComplexMatrix<T> MatrixCopy = ComplexMatrix(*this);
-        
-        for (int i = 0; i < this->rows; i++) {
-            // Якщо 0, то шукаємо перший ненульовий і свапаємо
-            if (MatrixCopy[i][i] == 0) {
-                int supportElement = i + 1;
-                while (supportElement < this->rows && MatrixCopy[supportElement][i] == 0) {
-                    supportElement++;
-                }
-                if (supportElement == this->rows) {
-                    printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
-                    return *this;
-                }
-                MatrixCopy.swapRows(i, supportElement);
-                Identity.swapRows(i, supportElement);
-            }
-
-            // Ділимо на a + bi
-            Complex<T> divider = MatrixCopy[i][i];
-
-            for (int j = 0; j < this->rows; j++) {
-                Identity[i][j] /= divider;
-            }
-            for (int j = i + 1; j < this->rows; j++) {
-                MatrixCopy[i][j] /= divider;
-            }
-
-            // Елементи під діагоналлю в 0
-            for (int k = i + 1; k < this->rows; k++) {
-                Complex<T> factor = MatrixCopy[k][i];
-
-                for (int j = 0; j < this->rows; j++) {
-                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
-                    Identity[k][j] -= (Identity[i][j] * factor);
-                }                
-            }
-
-            // Елементи над діагоналлю в 0
-            for (int k = i - 1; k >= 0; k--) {
-                Complex<T> factor = MatrixCopy[k][i];
-
-                for (int j = 0; j < this->rows; j++) {
-                    if (j >= i) MatrixCopy[k][j] -= (MatrixCopy[i][j] * factor);
-                    Identity[k][j] -= (Identity[i][j] * factor);
-                }
-            }
+        else if (algorithm == "Gauss-Jordan") {
+            return this->getInverseGaussJordan();
         }
-        return Identity;
-    }
-
-    /** Find inverse matrix using LU-decomposition method
-     * О(n^3)
-     *
-     * @return inverse matrix
-     */
-    ComplexMatrix<T> getInverseLU() {
-        if (this->columns != this->rows) {
-            printError(MATRIX_IS_NOT_SQUARE_ERROR_CODE);
-            return *this;
-        }
-        ComplexMatrix<T> Decomposition, Permutation;
-        if (getLUDecomposition(Decomposition, Permutation) == false) {
-            printError(CANNOT_FIND_INVERSE_MATRIX_ERROR_CODE);
-            return *this;
-        }
-
-        // Спробував через заміни, чомусь працює
-        ComplexMatrix<T> Inverse(this->rows);
-        vector<Complex<T>> D(this->rows);
-
-        for (int i = 0; i < this->rows; i++) {
-            // forward substitution
-            for (int j = 0; j < this->rows; j++) {
-                Complex<T> numerator = i == j ? Complex<T>(1, 0) : Complex<T>(0, 0);
-                for (int k = 0; k < j; k++) {
-                    numerator -= Decomposition[j][k] * D[k];
-                }
-                D[j] = numerator;
-            }
-            // backward substitution
-            for (int j = this->rows - 1; j >= 0; j--) {
-                Complex<T> numerator = D[j] ;
-                for (int k = j + 1; k < this->rows; k++) {
-                    numerator -= Decomposition[j][k] * Inverse[k][i];
-                }
-                Inverse[j][i] = numerator / Decomposition[j][j];
-            }            
-        }
-
-        for (int i = this->rows - 1; i >= 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (Permutation[i][j] != Complex<T>(1, 0)) {
-                    continue;
-                }
-                    
-                Permutation.swapRows(i, j);
-                Inverse.swapColumns(i, j);
-                i++;
-                break;
-            }
-        }
-
-        return Inverse;
+        printError(NOT_VALID_INVERSE_ALGORITHM_ERROR_CODE);
+        return *this;
     }
 
     /** Find transposed matrix
